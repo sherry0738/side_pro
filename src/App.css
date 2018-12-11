@@ -8,7 +8,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #3b4352;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -18,15 +18,7 @@
   color: white;
 }
 
-.App-link {
+.logIn, .signUp {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  text-decoration: none;
 }
