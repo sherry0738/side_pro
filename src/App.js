@@ -1,110 +1,82 @@
-import React, { Component } from 'react';
-import Quizzes from './Quizzes';
-import GoogleLogin from 'react-google-login';
-import GoogleLogout from 'react-google-login';
+import React, {Component, Fragment} from 'react';
+// import Quizzes from './Quizzes';
+// import User from './User';
+// import {Dashboard, GuestPage} from './SingleSignOn';
+// import GoogleLogout from './SingleSignOn';
+import Routes from './Routes';
+import Home from './containers/Home';
+import GuestPage from './containers/GuestPage';
+import {getDecodedToken} from './utils/AuthUtils';
+import Logout from './containers/Logout';
 import './App.css';
+import {Link} from 'react-router-dom';
+import {Nav, Navbar, NavItem} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            quizzes: '',
-            isLoggedIn: false,
-            avatarUrl: '',
-        };
-        this.getTokenObj = this.getTokenObj.bind(this);
-        this.parseJwt = this.parseJwt.bind(this);
-    }
+  constructor (props) {
+    super (props);
 
-    getTokenObj() {
-        return JSON.parse(localStorage.getItem('auth'));
-    }
+    this.state = {
+      isLoggedIn: false,
+      avatarUrl: '',
+    };
+  }
 
-    parseJwt(token) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace('-', '+').replace('_', '/');
-        return JSON.parse(window.atob(base64));
-    }
+  hasAuth = () => {
+    const decodedToken = getDecodedToken ();
 
-    componentDidMount() {
-        const tokenObj = this.getTokenObj();
-        console.log('tokenObj', tokenObj)
-        const idToken = tokenObj.id_token;
-        console.log('tokenObj.idToken', idToken)
-        tokenObj ? console.log('tokenObj', tokenObj) : console.log('no token');
-        if (tokenObj && idToken) {
-            this.setState({ isLoggedIn: true });
-            const decodedToken = this.parseJwt(idToken);
-            console.log('decodedToken', decodedToken);
+    this.setState ({isLoggedIn: true, auatarUrl: decodedToken.picture});
+  };
+  // Building a React App-Add the Session to the State
 
-            this.setState({ avatarUrl: decodedToken.picture });
-            //todo:move to service, only call after login
-            let mockUrl = 'http://localhost:8001';
+  render () {
+    const childProps = {
+      isLoggedIn: this.state.isLoggedIn,
+      avatarUrl: this.state.avatarUrl,
+      hasAuth: this.hasAuth,
+    };
+    return (
+      <div className="App container">
+        <Navbar fluid collapseOnSelect>
+          {/* <Navbar.Header>
+            <Navbar.Brand>
+              <Link to="/home">Welcome</Link>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+          </Navbar.Header> */}
+          <Navbar.Collapse>
+            <Nav pullRight>
 
-            fetch(mockUrl, { method: 'get', headers: new Headers({ Authorization: 'bearer ' + idToken }) })
-                .then(res => res.json())
-                .then(res => {
-                    this.setState({ quizzes: res.quizzes });
-                });
-        } else {
-            this.setState({ isLoggedIn: false });
-        }
-    }
+              <LinkContainer to="/home">
+                <NavItem>Home</NavItem>
+              </LinkContainer>
 
-    render() {
-        let quizzes = 'loading';
+              <LinkContainer to="/quiz/1">
+                <NavItem>Quiz</NavItem>
+              </LinkContainer>
 
-        const onSuccess = response => {
-            this.setState({ isLoggedIn: true });
-            localStorage.setItem('auth', JSON.stringify(response.tokenObj));
-        };
-
-        const onFailure = () => {
-            this.setState({ isLoggedIn: false });
-            localStorage.removeItem('auth');
-        };
-
-        const logOut = () => {
-            this.setState({ isLoggedIn: false, avatarUrl: '' });
-            localStorage.removeItem('auth');
-        };
-
-        if (this.state.quizzes) {
-            quizzes = this.state.quizzes.map((quiz, index) => {
-                return <Quizzes question_body={quiz.question_body} answers={quiz.answers} key={index} />;
-            });
-        }
-        const isLoggedIn = this.state.isLoggedIn;
-        const avatarUrl = this.state.avatarUrl;
-        return (
-            <div className="App">
-                <div className="App-header">
-                    {isLoggedIn ? (
-                        <div>
-                            <img src={avatarUrl} />
-                            <GoogleLogout
-                                clientId="201605823214-a65bf5spbckkrhdvgsvu8get3p5jrhb5.apps.googleusercontent.com"
-                                buttonText="Logout"
-                                onSuccess={logOut}
-                            />
-                        </div>
-                    ) : (
-                            <GoogleLogin
-                                clientId="201605823214-a65bf5spbckkrhdvgsvu8get3p5jrhb5.apps.googleusercontent.com"
-                                buttonText="Login"
-                                onSuccess={onSuccess}
-                                onFailure={onFailure}
-                                isSignedIn={this.state.isLoggedIn}
-                            />
-                        )}
-                    <div>
-                        <h1>Welcome to G-Aurora Team</h1>
-                    </div>
-                </div>
-                {quizzes}
-            </div>
-        );
-    }
+              <LinkContainer to="/user">
+                <NavItem>User</NavItem>
+              </LinkContainer>
+              {Boolean (this.state.isLoggedIn)
+                ? <Fragment>
+                    <LinkContainer to="#">
+                      <NavItem><Logout /></NavItem>
+                    </LinkContainer>
+                  </Fragment>
+                : <Fragment>
+                    <LinkContainer to="#">
+                      <NavItem />
+                    </LinkContainer>
+                  </Fragment>}
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
+        <Routes childProps={childProps} />
+      </div>
+    );
+  }
 }
 
 export default App;
