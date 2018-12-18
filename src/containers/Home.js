@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {Button} from 'antd';
+import 'antd/dist/antd.css';
 import './Home.css';
 
 export default class Home extends Component {
@@ -10,7 +12,9 @@ export default class Home extends Component {
         <div className="lander">
           <h1>Are you ready for a challenge?</h1>
           <div>
-            <button><a>Start</a></button>
+            <Button href="#" type="primary" size="large">
+              Start
+            </Button>
           </div>
         </div>
       </div>

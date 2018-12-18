@@ -6,8 +6,9 @@ import React, {Component, Fragment} from 'react';
 import Routes from './Routes';
 import Home from './containers/Home';
 import GuestPage from './containers/GuestPage';
+// import Quizzes from './Components/Quizzes';
 import {getDecodedToken} from './utils/AuthUtils';
-import Logout from './containers/Logout';
+import LogoutBtn from './containers/LogoutBtn';
 import './App.css';
 import {Link} from 'react-router-dom';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
@@ -24,9 +25,9 @@ class App extends Component {
   }
 
   hasAuth = () => {
-    const decodedToken = getDecodedToken ();
+    // const decodedToken = getDecodedToken ();
 
-    this.setState ({isLoggedIn: true, auatarUrl: decodedToken.picture});
+    this.setState ({isLoggedIn: true});
   };
   // Building a React App-Add the Session to the State
 
@@ -62,7 +63,7 @@ class App extends Component {
               {Boolean (this.state.isLoggedIn)
                 ? <Fragment>
                     <LinkContainer to="#">
-                      <NavItem><Logout /></NavItem>
+                      <NavItem><LogoutBtn /></NavItem>
                     </LinkContainer>
                   </Fragment>
                 : <Fragment>

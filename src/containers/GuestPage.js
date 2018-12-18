@@ -7,41 +7,49 @@ import {getQuiz} from './../utils/Api';
 // import {Button, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 import './GuestPage.css';
 
-export default class Guestpage extends Component {
+export default class GuestPage extends Component {
   constructor (props) {
     super (props);
 
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
+      quiz: '',
     };
   }
 
   componentDidMount () {
     const tokenObj = getTokenObj ();
-    if (!tokenObj || !tokenObj.id_token) {
-      this.setState ({isLoggedIn: this.props.isLoggedIn});
-      // console.log ('no tokenObj, which mean login has not done!!');
-    }
-    const decodedToken = parseJwt (tokenObj.id_token);
-    const quiz = getQuiz (tokenObj.id_token);
 
-    // console.log ('decodedToken  in guestpage', decodedToken);
-    // console.log ('quiz in guestpage', quiz);
-    this.setState ({
-      isLoggedIn: this.props.isLoggedIn,
-      avatarUrl: this.props.avatarUrl,
-      quizzes: quiz,
-    });
-    // console.log ('this.props.isLoggedIn in guestpage', this.props.isLoggedIn);
-    // console.log ('this.props.avatarUrl in guestpage', this.props.avatarUrl);
+    if (tokenObj && tokenObj.id_token) {
+      // const quiz = getQuiz (tokenObj.id_token);
+      console.log ('tokenObj  in guestpage', tokenObj.id_token);
+      this.props.hasAuth ();
+      // console.log ('quiz in guestpage', quiz);
+      let url = 'http://localhost:3001';
+      const id_token = tokenObj.id_token;
+      fetch (url, {
+        method: 'get',
+        headers: new Headers ({Authorization: 'bearer ' + id_token}),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      })
+        .then (res => res.json ())
+        .then (res => {
+          this.setState ({quiz: res.quizzes});
+          console.log ('res in guestpage', res);
+          console.log ('this.state.quiz', this.state.quiz);
+        });
+    } else {
+      console.log ('need to login first!!');
+    }
   }
 
   render () {
     const onSuccess = response => {
-      //   this.props.hasAuth ();
+      this.props.hasAuth ();
+      // setTimeout (() => this.props.hasAuth (), 1000);
       localStorage.setItem ('auth', JSON.stringify (response.tokenObj));
-      setTimeout (() => this.props.hasAuth (), 1000);
       this.props.history.push ('/home');
       //   console.log ('isLoggedIn in onSuccess function', this.props.isLoggedIn);
       //   console.log ('avatar in onSuccess function', this.props.avatarUrl);
