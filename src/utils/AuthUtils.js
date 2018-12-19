@@ -6,6 +6,15 @@ export const parseJwt = id_token => {
   return JSON.parse (window.atob (base64));
 };
 
+export const checkUserExist = () => {
+  const tokenObj = getTokenObj ();
+
+  if (!tokenObj || !tokenObj.id_token) {
+    return false;
+  }
+  return true;
+};
+
 export const getDecodedToken = () => {
   const tokenObj = getTokenObj ();
   if (!tokenObj) {

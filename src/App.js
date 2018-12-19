@@ -1,18 +1,11 @@
 import React, {Component, Fragment} from 'react';
-// import Quizzes from './Quizzes';
-// import User from './User';
-// import {Dashboard, GuestPage} from './SingleSignOn';
-// import GoogleLogout from './SingleSignOn';
 import Routes from './Routes';
-import Home from './containers/Home';
-import GuestPage from './containers/GuestPage';
-// import Quizzes from './Components/Quizzes';
 import {getDecodedToken} from './utils/AuthUtils';
-import LogoutBtn from './containers/LogoutBtn';
-import './App.css';
 import {Link} from 'react-router-dom';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
+import LogoutBtn from './containers/LogoutBtn';
+import './App.css';
 
 class App extends Component {
   constructor (props) {
@@ -25,9 +18,8 @@ class App extends Component {
   }
 
   hasAuth = () => {
-    // const decodedToken = getDecodedToken ();
-
-    this.setState ({isLoggedIn: true});
+    const decodedToken = getDecodedToken ();
+    this.setState ({isLoggedIn: true, avatarUrl: decodedToken.picture});
   };
   // Building a React App-Add the Session to the State
 
@@ -42,7 +34,13 @@ class App extends Component {
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/home">G-Team</Link>
+              <Link to="/home">
+                G-Team
+                {/* <img
+                  className="galahs"
+                  src="https://rlv.zcache.com.au/cartoon_galah_cockatoo_classic_round_sticker-r0780d99fb835422e9d16ff902e817b0d_v9waf_8byvr_540.jpg"
+                /> */}
+              </Link>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -60,12 +58,25 @@ class App extends Component {
               <LinkContainer to="/user">
                 <NavItem>User</NavItem>
               </LinkContainer>
+
               {Boolean (this.state.isLoggedIn)
-                ? <Fragment>
-                    <LinkContainer to="#">
-                      <NavItem><LogoutBtn /></NavItem>
-                    </LinkContainer>
-                  </Fragment>
+                ? <div className="menu-box">
+                    <Fragment>
+                      <LinkContainer to="#">
+                        <NavItem>
+                          <img
+                            src={this.state.avatarUrl}
+                            className="avatar-img"
+                          />
+                        </NavItem>
+                      </LinkContainer>
+                    </Fragment>
+                    <Fragment>
+                      <LinkContainer to="#">
+                        <NavItem><LogoutBtn /></NavItem>
+                      </LinkContainer>
+                    </Fragment>
+                  </div>
                 : <Fragment>
                     <LinkContainer to="#">
                       <NavItem />

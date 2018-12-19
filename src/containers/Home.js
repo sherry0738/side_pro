@@ -1,12 +1,20 @@
 import React, {Component} from 'react';
+import {checkUserExist} from './../utils/AuthUtils';
 import {Button} from 'antd';
 import 'antd/dist/antd.css';
 import './Home.css';
 
 export default class Home extends Component {
+  componentDidMount () {
+    const userExist = Boolean (checkUserExist ()) === true;
+    if (!userExist) {
+      this.props.history.push ('/');
+      return console.log ('NEED login FIRST');
+    }
+    return this.props.hasAuth ();
+  }
+
   render () {
-    // console.log ('this.props.isLoggedIn in home.js', this.props.isLoggedIn);
-    // console.log ('this.props.avatarUrl  in home.js', this.props.avatarUrl);
     return (
       <div className="Home">
         <div className="lander">

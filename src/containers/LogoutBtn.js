@@ -9,7 +9,9 @@ const logoutBtn = props => {
   return (
     <div>
       <img src={props.avatarUrl} alt="" />
-      <Button href="/" onClick={logout} type="primary">Logout</Button>
+      <Button href="/" onClick={logout} type="primary" size="small">
+        Logout
+      </Button>
     </div>
   );
 };

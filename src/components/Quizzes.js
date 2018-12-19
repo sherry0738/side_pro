@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {getTokenObj} from './../utils/AuthUtils';
+import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
 import {Card, Checkbox, Button} from 'antd';
-// import {Button, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 import './Quizzes.css';
 
 export default class Quizzes extends Component {
@@ -16,27 +15,25 @@ export default class Quizzes extends Component {
   }
 
   componentDidMount () {
-    const tokenObj = getTokenObj ();
-    if (tokenObj && tokenObj.id_token) {
-      this.props.hasAuth ();
-
-      let url = 'http://localhost:3001';
-      const id_token = tokenObj.id_token;
-      //   const quizz = getQuiz (id_token);
-      fetch (url, {
-        method: 'get',
-        headers: new Headers ({Authorization: 'bearer ' + id_token}),
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      })
-        .then (res => res.json ())
-        .then (res => {
-          this.setState ({quiz: res.quizzes});
-        });
-    } else {
+    const userExist = Boolean (checkUserExist ()) === true;
+    if (!userExist) {
       this.props.history.push ('/');
-      console.log ('NEED login FIRST');
+      return console.log ('NEED login FIRST');
     }
+    this.props.hasAuth ();
+
+    const tokenObj = getTokenObj ();
+    let url = 'http://localhost:3001';
+    fetch (url, {
+      method: 'get',
+      headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    })
+      .then (res => res.json ())
+      .then (res => {
+        this.setState ({quiz: res.quizzes});
+      });
   }
 
   onChange (e) {
@@ -49,7 +46,11 @@ export default class Quizzes extends Component {
         const answers = q.answers.map ((answer, index) => {
           return (
             <p key={index}>
-              <Checkbox onChange={this.onChange}>
+              <Checkbox
+                onChange={this.onChange}
+                autoFocus={true}
+                indeterminate={false}
+              >
                 <span>{answer.title.toUpperCase ()}.</span>
               </Checkbox>
               {answer.description}
@@ -64,7 +65,6 @@ export default class Quizzes extends Component {
               type="inner"
               title={`${q.id}. ${q.question_body}`}
               bordered={false}
-              //   style={{width: 800}}
             >
               {answers}
               <Button href={`/quiz/${q.id} `} type="primary" htmlType="submit">
