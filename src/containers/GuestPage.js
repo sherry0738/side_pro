@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import GoogleLogin from 'react-google-login';
 import {getTokenObj} from './../utils/AuthUtils';
-import {parseJwt} from './../utils/AuthUtils';
-import {getDecodedToken} from './../utils/AuthUtils';
-import {getQuiz} from './../utils/Api';
 // import {Button, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 import './GuestPage.css';
 
@@ -47,8 +44,8 @@ export default class GuestPage extends Component {
 
   render () {
     const onSuccess = response => {
-      this.props.hasAuth ();
-      // setTimeout (() => this.props.hasAuth (), 1000);
+      // this.props.hasAuth ();
+      setTimeout (() => this.props.hasAuth (), 1000);
       localStorage.setItem ('auth', JSON.stringify (response.tokenObj));
       this.props.history.push ('/home');
       //   console.log ('isLoggedIn in onSuccess function', this.props.isLoggedIn);

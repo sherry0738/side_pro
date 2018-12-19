@@ -10,7 +10,7 @@ export default ({childProps}) => (
   <Switch>
     <AppliedRoute path="/" exact component={GuestPage} props={childProps} />
     <AppliedRoute path="/home" exact component={Home} props={childProps} />
-    {/* <AppliedRoute path="/quiz/1" exact component={Quizzes} props={childProps} /> */}
+    <AppliedRoute path="/quiz/1" exact component={Quizzes} props={childProps} />
     {/* Finally, catch all unmatched routes */}
     <Route component={NotFound} />
   </Switch>

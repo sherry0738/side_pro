@@ -12,7 +12,7 @@ export default class Home extends Component {
         <div className="lander">
           <h1>Are you ready for a challenge?</h1>
           <div>
-            <Button href="#" type="primary" size="large">
+            <Button href="/quiz/1" type="primary" size="large">
               Start
             </Button>
           </div>
