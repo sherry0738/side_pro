@@ -1,11 +1,10 @@
 .user-container {
     display: flex;
     flex-direction: row;
-    /* justify-content: flex-start; */
     margin: 0 auto;
 }
 .collapse-box {
-    width: 100%;
+    width: 90%;
 }
 
 .avatar-box {

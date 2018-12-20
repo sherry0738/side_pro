@@ -55,6 +55,10 @@ class App extends Component {
                 <NavItem>Quiz</NavItem>
               </LinkContainer>
 
+              <LinkContainer to="/add">
+                <NavItem>Create quiz</NavItem>
+              </LinkContainer>
+
               <LinkContainer to="/user">
                 <NavItem>User</NavItem>
               </LinkContainer>

@@ -12,12 +12,15 @@ a {
 }
 
 .menu-box {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
-  line-height: 3.5
+  line-height: 3.5;
+  margin-left: 10px;
+  max-width: 30%;
 }
 .avatar-img {
-  width: 43%;
+  /* width: 40%; */
+  width:70%;
   border-radius: 50%;
 }
 

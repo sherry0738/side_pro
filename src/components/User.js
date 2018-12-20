@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
+import {
+  getTokenObj,
+  getDecodedToken,
+  checkUserExist,
+} from './../utils/AuthUtils';
 import {ValidUrl} from './../utils/ValidUrl';
 import {
   Card,
@@ -25,7 +29,9 @@ export default class Quizzes extends Component {
       symbolValue: '',
       bGroundValue: '',
       borderValue: '',
-      avatarView: this.props.avatarUrl,
+      avatarView: '',
+      name: '',
+      description: '',
     };
   }
 
@@ -36,7 +42,14 @@ export default class Quizzes extends Component {
       return console.log ('NEED login FIRST');
     }
     this.props.hasAuth ();
-
+    this.setState ({
+      avatarView: this.props.avatarUrl
+        ? this.props.avatarUrl
+        : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA_oX0Xg-tJvcxkxwvc3C4AYnlJDJfvpWTQ5jFnUR7yAjDqtQS',
+    });
+    const userInfo = getDecodedToken ();
+    this.setState ({name: userInfo.name});
+    console.log (userInfo);
     const tokenObj = getTokenObj ();
     let url = 'http://localhost:3001';
     fetch (url, {
@@ -56,6 +69,10 @@ export default class Quizzes extends Component {
     // const validatedUrl = ValidUrl (value);
     // console.log ('validatedUrl', validatedUrl);
     this.setState ({avatarView: value});
+  };
+  toggleInput = () => {};
+  handleInput = e => {
+    console.log ('L74', e.target.value);
   };
 
   symbolChange = e => {
@@ -116,23 +133,31 @@ export default class Quizzes extends Component {
 
     const bGroundOptions = [
       {
-        label: 'Dark',
-        value: 'bGround dark',
+        label: 'America',
+        value: 'https://ih0.redbubble.net/image.66502006.2903/mp,550x550,matte,ffffff,t.3u3.jpg',
       },
       {
-        label: 'Bright',
-        value: 'bGround bright',
+        label: 'Flag',
+        value: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3MBz4Qmpuux-LvYcEC89cG_gJSlmlQUkWGhzUVcr4kn9-bfIY',
+      },
+      {
+        label: 'Flag2',
+        value: 'http://sf.co.ua/14/04/wallpaper-743589.jpg',
+      },
+      {
+        label: 'Flag3',
+        value: 'http://footage.framepool.com/shotimg/qf/139147502-hungarian-flag-fabric-waving-sway-symbol.jpg',
       },
     ];
 
     const borderOptions = [
       {
-        label: 'Modern',
-        value: 'modern border',
+        label: 'Classic',
+        value: 'https://img00.deviantart.net/954e/i/2008/134/b/b/border_iii_by_struckdumb.jpg',
       },
       {
-        label: 'Classic',
-        value: 'classic border',
+        label: 'Modern',
+        value: 'https://dumielauxepices.net/sites/default/files/photography-clipart-borders-714149-3465520.jpg',
       },
     ];
 
@@ -140,32 +165,32 @@ export default class Quizzes extends Component {
       <div className="user-container">
         <div className="avatar-box">
           <Card
-            style={{width: 300}}
+            style={{width: 294}}
             cover={
               this.state.avatarView
                 ? <img
                     alt="avatar-view"
-                    style={{width: 300}}
+                    style={{width: 294}}
                     src={this.state.avatarView}
                   />
                 : <Spin size="small" style={avatarViewStyle} />
             }
             actions={[
               <Icon type="setting" />,
-              <Icon type="edit" />,
+              <Icon type="edit" onClick={this.toggleInput} />,
               <Icon type="ellipsis" />,
             ]}
           >
             <Meta
               avatar={<Avatar src={this.props.avatarUrl} />}
-              title="Card title"
-              description="This is the description"
+              title={this.state.name}
+              description={this.handleInput}
             />
           </Card>
         </div>
         <div className="collapse-box">
           <h2>Avatar setting</h2>
-          <Collapse bordered={false} defaultActiveKey={['1']}>
+          <Collapse bordered={false}>
             <Panel header="Symbol setting" key="1" style={customPanelStyle}>
               <RadioGroup
                 options={symbolOptions}
