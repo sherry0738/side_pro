@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
-import {Card, Checkbox, Button} from 'antd';
+import {Card, Checkbox, Button, Spin} from 'antd';
 import './Quizzes.css';
 
 export default class Quizzes extends Component {
@@ -43,14 +43,11 @@ export default class Quizzes extends Component {
     let quiz = null;
     if (this.state.quiz) {
       quiz = this.state.quiz.map ((q, i) => {
+        //   const plainOptions = q.answers.map(answer)
         const answers = q.answers.map ((answer, index) => {
           return (
             <p key={index}>
-              <Checkbox
-                onChange={this.onChange}
-                autoFocus={true}
-                indeterminate={false}
-              >
+              <Checkbox onChange={this.onChange} autoFocus={true}>
                 <span>{answer.title.toUpperCase ()}.</span>
               </Checkbox>
               {answer.description}
@@ -75,7 +72,11 @@ export default class Quizzes extends Component {
         );
       });
     } else {
-      console.log ('loading... maybe a loader here');
+      return (
+        <div className="example">
+          <Spin size="large" />
+        </div>
+      );
     }
 
     return (

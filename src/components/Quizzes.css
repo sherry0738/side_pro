@@ -6,3 +6,12 @@ ul {
     margin: 0 auto;
     max-width: 90%;
 }
+
+.example {
+    text-align: center;
+    background: rgba(10, 10, 10, 0.05);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 30px 50px;
+    margin: 20px 0;
+  }

@@ -1,0 +1,14 @@
+.user-container {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    margin: 0 auto;
+}
+.collapse-box {
+    width: 100%;
+}
+
+.avatar-box {
+   margin-right: 50px;
+   max-width: 100%;
+}
