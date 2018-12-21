@@ -71,6 +71,7 @@ class App extends Component {
                           <img
                             src={this.state.avatarUrl}
                             className="avatar-img"
+                            alt="avatar-menu"
                           />
                         </NavItem>
                       </LinkContainer>

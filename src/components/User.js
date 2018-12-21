@@ -4,18 +4,7 @@ import {
   getDecodedToken,
   checkUserExist,
 } from './../utils/AuthUtils';
-import {ValidUrl} from './../utils/ValidUrl';
-import {
-  Card,
-  Upload,
-  message,
-  Icon,
-  Avatar,
-  Collapse,
-  Radio,
-  Input,
-  Spin,
-} from 'antd';
+import {Card, Icon, Avatar, Collapse, Radio, Spin} from 'antd';
 import './User.css';
 
 export default class Quizzes extends Component {
@@ -32,6 +21,7 @@ export default class Quizzes extends Component {
       avatarView: '',
       name: '',
       description: '',
+      scores: 0,
     };
   }
 
@@ -185,6 +175,7 @@ export default class Quizzes extends Component {
               avatar={<Avatar src={this.props.avatarUrl} />}
               title={this.state.name}
               description={this.handleInput}
+              scores={this.state.scores}
             />
           </Card>
         </div>

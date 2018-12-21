@@ -81,6 +81,7 @@ export default class Quizzes extends Component {
 
     return (
       <div style={{background: '#ECECEC', padding: '30px'}}>
+        <h1>Quiz</h1>
         {quiz}
       </div>
     );
