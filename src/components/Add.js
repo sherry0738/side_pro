@@ -1,16 +1,25 @@
 import React, {Component} from 'react';
-import {Form, Input, Button, Icon} from 'antd';
+import {checkUserExist} from './../utils/AuthUtils';
+import {Card, Form, Input, Button, Icon} from 'antd';
 import './Add.css';
 
 const FormItem = Form.Item;
-let id = 0;
+// let id = 0;
 
 class AddNew extends React.Component {
+  componentDidMount () {
+    const userExist = Boolean (checkUserExist ()) === true;
+    if (!userExist) {
+      this.props.history.push ('/');
+      return console.log ('NEED login FIRST');
+    }
+    this.props.hasAuth ();
+  }
+
   getFields () {
     const {getFieldDecorator} = this.props.form;
     const children = [];
     const defaultAlph = 'abc'.split ('');
-    const restAlph = 'defghijklmnopqrstuvwxyz'.split ('');
     defaultAlph.forEach (l => {
       for (let i = l; i < l + 3; i++) {
         children.push (
@@ -30,26 +39,18 @@ class AddNew extends React.Component {
 
     return children;
   }
-  remove = k => {
-    const {form} = this.props;
-    const keys = form.getFieldValue ('keys');
-    if (keys.length === 1) {
-      return;
-    }
 
-    form.setFieldsValue ({
-      keys: keys.filter (key => key !== k),
-    });
-  };
-
-  AddFiled () {
-    const {form} = this.props;
-    const keys = form.getFieldValue ('keys');
-    const nextkeys = keys.concat (++id);
-    form.setFieldsValue ({
-      keys: nextkeys,
+  requiredWarining () {
+    this.form.getFieldDecorator ({
+      rules: [
+        {
+          required: true,
+          message: 'Is required!',
+        },
+      ],
     });
   }
+
   handleSubmit = e => {
     e.preventDefault ();
     this.props.form.validateFields ((err, values) => {
@@ -63,44 +64,46 @@ class AddNew extends React.Component {
 
   render () {
     return (
-      <div>
-        <h1>Create quiz form</h1>
-        <Form
-          layout="horizontal"
-          className="ant-advanced-search-form"
-          onSubmit={this.handleSubmit}
-        >
-          <FormItem label="Question body">
-            <Input placeholder="or question title here" />
-          </FormItem>
-          <FormItem label="Answer options">
-            {this.getFields ()}
-            <FormItem
-            // {...formItemLayoutWithOutLabel}
-            >
-              <Button
-                type="dashed"
-                onClick={this.AddFiled}
-                style={{width: '60%'}}
+      <div className="quiz-form">
+        <Card title="Create quiz form" bordered={false}>
+          <Form
+            hideRequiredMark={false}
+            layout="horizontal"
+            className="ant-advanced-search-form"
+            onSubmit={this.handleSubmit}
+          >
+            <FormItem label="Question body" required={true}>
+              <Input placeholder="or question title here" />
+            </FormItem>
+            <FormItem label="Answer options">
+              {this.getFields ()}
+              <FormItem
+              // {...formItemLayoutWithOutLabel}
               >
-                <Icon type="plus" /> Add field
+                <Button
+                  type="dashed"
+                  onClick={this.AddFiled}
+                  style={{width: '60%'}}
+                >
+                  <Icon type="plus" /> Add more
+                </Button>
+              </FormItem>
+            </FormItem>
+            <FormItem label="Scores" required={true}>
+              <Input placeholder="number for this quiz's scores" />
+            </FormItem>
+            <FormItem label="Correct answer" required={true}>
+              <Input placeholder="input one of alphabet letter to set the correct answer" />
+            </FormItem>
+
+            <FormItem>
+              <Button type="primary" htmlType="submit">Submit</Button>
+              <Button style={{marginLeft: 10}} onClick={this.handleReset}>
+                Clear
               </Button>
             </FormItem>
-          </FormItem>
-          <FormItem label="Scores">
-            <Input placeholder="number for this quiz's scores" />
-          </FormItem>
-          <FormItem label="Correct answer">
-            <Input placeholder="input one of alphabet letter to set the correct answer" />
-          </FormItem>
-
-          <FormItem>
-            <Button type="primary" htmlType="submit">Submit</Button>
-            <Button style={{marginLeft: 8}} onClick={this.handleReset}>
-              Clear
-            </Button>
-          </FormItem>
-        </Form>
+          </Form>
+        </Card>
       </div>
     );
   }

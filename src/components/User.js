@@ -12,9 +12,6 @@ export default class Quizzes extends Component {
     super (props);
     console.log ('props', this.props);
     this.state = {
-      //   isLoggedIn: false,
-      //   avatarUrl: '',
-      //   quiz: '',
       symbolValue: '',
       bGroundValue: '',
       borderValue: '',
