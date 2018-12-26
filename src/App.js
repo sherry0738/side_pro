@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import Routes from './Routes';
-import {getDecodedToken} from './utils/AuthUtils';
+import {getTokenObj, getDecodedToken} from './utils/AuthUtils';
 import {Link} from 'react-router-dom';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
@@ -14,23 +14,41 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
+      totalQuiz: 1,
     };
   }
 
   hasAuth = () => {
+    const tokenObj = getTokenObj ();
+    let url = 'http://localhost:3001';
+    fetch (url, {
+      method: 'get',
+      headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    })
+      .then (res => res.json ())
+      .then (res => {
+        this.setState ({totalQuiz: res.totalCount});
+      });
+    console.log (this.state.quiz);
     const decodedToken = getDecodedToken ();
     this.setState ({isLoggedIn: true, avatarUrl: decodedToken.picture});
   };
   // Building a React App-Add the Session to the State
 
   render () {
+    // const totalQuiz = this.state.totalQuiz;
     const childProps = {
+      totalQuiz: this.state.totalQuiz,
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
       hasAuth: this.hasAuth,
     };
+    console.log (this.state.quiz);
     return (
       <div className="App container">
+
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
@@ -75,8 +93,6 @@ class App extends Component {
                           />
                         </NavItem>
                       </LinkContainer>
-                    </Fragment>
-                    <Fragment>
                       <LinkContainer to="#">
                         <NavItem><LogoutBtn /></NavItem>
                       </LinkContainer>

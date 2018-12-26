@@ -54,7 +54,6 @@ export default class Quizzes extends Component {
   handleAvatarDisplay = value => {
     console.log ('value for avatar view', value);
     // const validatedUrl = ValidUrl (value);
-    // console.log ('validatedUrl', validatedUrl);
     this.setState ({avatarView: value});
   };
   toggleInput = () => {};

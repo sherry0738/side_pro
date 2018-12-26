@@ -1,12 +1,20 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {checkUserExist} from './../utils/AuthUtils';
-import {Card, Form, Input, Button, Icon} from 'antd';
+import {Card, Form, Input, Button, Icon, Select} from 'antd';
 import './Add.css';
 
 const FormItem = Form.Item;
-// let id = 0;
+const Option = Select.Option;
 
 class AddNew extends React.Component {
+  constructor (props) {
+    super (props);
+
+    const value = props.value || {};
+    this.state = {
+      quizType: value.type || 'Please select a quiz type',
+    };
+  }
   componentDidMount () {
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
@@ -20,10 +28,10 @@ class AddNew extends React.Component {
     const {getFieldDecorator} = this.props.form;
     const children = [];
     const defaultAlph = 'abc'.split ('');
-    defaultAlph.forEach (l => {
+    defaultAlph.forEach ((l, index) => {
       for (let i = l; i < l + 3; i++) {
         children.push (
-          <FormItem label={`${i}`}>
+          <FormItem label={`${i}`} key={index}>
             {getFieldDecorator (`${i}`, {
               rules: [
                 {
@@ -54,12 +62,27 @@ class AddNew extends React.Component {
   handleSubmit = e => {
     e.preventDefault ();
     this.props.form.validateFields ((err, values) => {
-      console.log ('Received values of form: ', values);
+      if (!err) {
+        console.log ('Received values of form: ', values);
+      }
     });
   };
 
   handleReset = () => {
     this.props.form.resetFields ();
+  };
+
+  handleQuizTypeChange = value => {
+    this.setState ({quizType: value});
+    this.triggerChange ({value});
+  };
+
+  triggerChange = changedValue => {
+    // Should provide an event to pass value to Form.
+    const onChange = this.props.onChange;
+    if (onChange) {
+      onChange (Object.assign ({}, this.state, changedValue));
+    }
   };
 
   render () {
@@ -72,14 +95,28 @@ class AddNew extends React.Component {
             className="ant-advanced-search-form"
             onSubmit={this.handleSubmit}
           >
+            {/* Add a dropdown input here */}
+            <FormItem label="Quiz Type">
+              <Select
+                value={this.state.quizType}
+                required={true}
+                style={{width: '35%'}}
+                onChange={this.handleQuizTypeChange}
+              >
+                <Option value="onboarding">Onboarding</Option>
+                <Option value="frontend">Frontend</Option>
+                <Option value="backend">Backend</Option>
+                <Option value="database">Database</Option>
+                <Option value="testing">Testing</Option>
+                <Option value="other">Other</Option>
+              </Select>
+            </FormItem>
             <FormItem label="Question body" required={true}>
               <Input placeholder="or question title here" />
             </FormItem>
             <FormItem label="Answer options">
               {this.getFields ()}
-              <FormItem
-              // {...formItemLayoutWithOutLabel}
-              >
+              <FormItem>
                 <Button
                   type="dashed"
                   onClick={this.AddFiled}
