@@ -31,21 +31,30 @@ class App extends Component {
       .then (res => {
         this.setState ({totalQuiz: res.totalCount});
       });
-    console.log (this.state.quiz);
+    console.log (this.state.totalQuiz);
     const decodedToken = getDecodedToken ();
     this.setState ({isLoggedIn: true, avatarUrl: decodedToken.picture});
   };
   // Building a React App-Add the Session to the State
 
   render () {
-    // const totalQuiz = this.state.totalQuiz;
+    const totalQuizNum = this.state.totalQuiz;
+    console.log ('this.state.totalQuiz', this.state.totalQuiz);
+    console.log ('totalQuizNum', totalQuizNum);
+    // const quizPageNum = totalQuizNum.map ((num, i) => {
+    //   return (
+    //     <LinkContainer to={`/quiz/${num}`}>
+    //       <NavItem>Quiz</NavItem>
+    //     </LinkContainer>
+    //   );
+    // });
+
     const childProps = {
       totalQuiz: this.state.totalQuiz,
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
       hasAuth: this.hasAuth,
     };
-    console.log (this.state.quiz);
     return (
       <div className="App container">
 
@@ -72,6 +81,7 @@ class App extends Component {
               <LinkContainer to="/quiz/1">
                 <NavItem>Quiz</NavItem>
               </LinkContainer>
+              {/* {quizPageNum} */}
 
               <LinkContainer to="/add">
                 <NavItem>Create quiz</NavItem>

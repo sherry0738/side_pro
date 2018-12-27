@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
-import {Card, Checkbox, Button, Spin} from 'antd';
+import {Card, Checkbox, Button, Spin, Pagination} from 'antd';
 import './Quizzes.css';
 
 export default class Quizzes extends Component {
@@ -10,11 +10,15 @@ export default class Quizzes extends Component {
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
-      quiz: '',
+      quizzes: '',
     };
   }
+  currentId = () => {
+    return this.props.history.location.pathname.replace ('/quiz/', '');
+  };
 
   componentDidMount () {
+    const {quizId} = this.currentId ();
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
       this.props.history.push ('/');
@@ -32,45 +36,60 @@ export default class Quizzes extends Component {
     })
       .then (res => res.json ())
       .then (res => {
-        this.setState ({quiz: res.quizzes});
+        this.setState ({quizzes: res.quizzes});
       });
   }
 
   onChange (e) {
     console.log (`checked = ${e.target.checked}`);
   }
+
+  onPageChange (e) {
+    console.log ('e', e);
+  }
+
   render () {
     let quiz = null;
-    if (this.state.quiz) {
-      quiz = this.state.quiz.map ((q, i) => {
-        //   const plainOptions = q.answers.map(answer)
-        const answers = q.answers.map ((answer, index) => {
-          return (
-            <p key={index}>
-              <Checkbox onChange={this.onChange} autoFocus={true}>
-                <span>{answer.title.toUpperCase ()}.</span>
-              </Checkbox>
-              {answer.description}
-            </p>
-          );
-        });
-
+    if (this.state.quizzes) {
+      quiz = this.state.quizzes.find (quiz => quiz.id === this.currentId ());
+      const answers = quiz.answers.map ((answer, index) => {
         return (
-          <div key={i}>
+          <p key={index}>
+            <Checkbox onChange={this.onChange} autoFocus={true}>
+              <span>{answer.title.toUpperCase ()}.</span>
+            </Checkbox>
+            {answer.description}
+          </p>
+        );
+      });
+
+      return (
+        <div key={quiz.id}>
+          <Card title="Quiz">
             <Card
               className="quizCard"
               type="inner"
-              title={`${q.id}. ${q.question_body}`}
+              title={`${quiz.id}. ${quiz.question_body}`}
               bordered={false}
             >
               {answers}
-              <Button href={`/quiz/${q.id} `} type="primary" htmlType="submit">
+              <Button
+                href={`/quiz/${quiz.id} `}
+                type="primary"
+                htmlType="submit"
+              >
                 Submit
               </Button>
             </Card>
-          </div>
-        );
-      });
+          </Card>
+          <Pagination
+            defaultCurrent={1}
+            pageSize={1}
+            total={2}
+            onChange={this.onPageChange}
+          />
+        </div>
+      );
     } else {
       return (
         <div className="example">
@@ -83,6 +102,12 @@ export default class Quizzes extends Component {
       <div style={{background: '#ECECEC', padding: '30px'}}>
         <h1>Quiz</h1>
         {quiz}
+        <Pagination
+          defaultCurrent={1}
+          pageSize={1}
+          total={2}
+          onChange={this.onPageChange}
+        />
       </div>
     );
   }

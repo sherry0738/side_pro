@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import GoogleLogin from 'react-google-login';
 import {getTokenObj} from './../utils/AuthUtils';
+import {Pagination} from 'antd';
 // import {Button, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 import './GuestPage.css';
 
@@ -43,6 +44,9 @@ export default class GuestPage extends Component {
   }
 
   render () {
+    if (Boolean (this.props.isLoggedIn)) {
+      this.props.history.push ('/home');
+    }
     const onSuccess = response => {
       // this.props.hasAuth ();
       setTimeout (() => this.props.hasAuth (), 1000);
@@ -61,7 +65,7 @@ export default class GuestPage extends Component {
 
     return (
       <div>
-        <h1>This is Guest page...:)</h1>
+        <h1>Welcome to the G Team!</h1>
         <img src={this.state.avatarUrl} alt="" />
         <GoogleLogin
           clientId="201605823214-a65bf5spbckkrhdvgsvu8get3p5jrhb5.apps.googleusercontent.com"
