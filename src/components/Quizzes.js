@@ -6,11 +6,12 @@ import './Quizzes.css';
 export default class Quizzes extends Component {
   constructor (props) {
     super (props);
-
+    this.onPageChange = this.onPageChange.bind (this);
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
       quizzes: '',
+      currentPage: 1,
     };
   }
   currentId = () => {
@@ -44,8 +45,11 @@ export default class Quizzes extends Component {
     console.log (`checked = ${e.target.checked}`);
   }
 
-  onPageChange (e) {
-    console.log ('e', e);
+  onPageChange (page) {
+    this.setState ({
+      currentPage: page,
+    });
+    this.props.history.replace ({pathname: '/quiz/' + `${page}`});
   }
 
   render () {
@@ -87,6 +91,7 @@ export default class Quizzes extends Component {
             pageSize={1}
             total={2}
             onChange={this.onPageChange}
+            current={this.state.currentPage}
           />
         </div>
       );
@@ -97,18 +102,5 @@ export default class Quizzes extends Component {
         </div>
       );
     }
-
-    return (
-      <div style={{background: '#ECECEC', padding: '30px'}}>
-        <h1>Quiz</h1>
-        {quiz}
-        <Pagination
-          defaultCurrent={1}
-          pageSize={1}
-          total={2}
-          onChange={this.onPageChange}
-        />
-      </div>
-    );
   }
 }

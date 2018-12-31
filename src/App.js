@@ -14,43 +14,17 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
-      totalQuiz: 1,
     };
   }
 
   hasAuth = () => {
-    const tokenObj = getTokenObj ();
-    let url = 'http://localhost:3001';
-    fetch (url, {
-      method: 'get',
-      headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    })
-      .then (res => res.json ())
-      .then (res => {
-        this.setState ({totalQuiz: res.totalCount});
-      });
-    console.log (this.state.totalQuiz);
     const decodedToken = getDecodedToken ();
     this.setState ({isLoggedIn: true, avatarUrl: decodedToken.picture});
   };
   // Building a React App-Add the Session to the State
 
   render () {
-    const totalQuizNum = this.state.totalQuiz;
-    console.log ('this.state.totalQuiz', this.state.totalQuiz);
-    console.log ('totalQuizNum', totalQuizNum);
-    // const quizPageNum = totalQuizNum.map ((num, i) => {
-    //   return (
-    //     <LinkContainer to={`/quiz/${num}`}>
-    //       <NavItem>Quiz</NavItem>
-    //     </LinkContainer>
-    //   );
-    // });
-
     const childProps = {
-      totalQuiz: this.state.totalQuiz,
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
       hasAuth: this.hasAuth,
