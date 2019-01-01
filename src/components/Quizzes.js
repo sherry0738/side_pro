@@ -1,24 +1,23 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
-import {Card, Checkbox, Button, Spin, Pagination} from 'antd';
+import {Card, Checkbox, Button, Spin, Pagination, Radio} from 'antd';
 import './Quizzes.css';
+const RadioGroup = Radio.Group;
 
 export default class Quizzes extends Component {
   constructor (props) {
     super (props);
     this.onPageChange = this.onPageChange.bind (this);
+    this.onChange = this.onChange.bind (this);
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
       quizzes: '',
       currentPage: 1,
+      radioValue: '',
     };
   }
   currentId = () => {
-    console.log (
-      ' this.props.history.location.pathname.replace ',
-      this.props.history.location.pathname.replace ('/quiz/', '')
-    );
     return this.props.history.location.pathname.replace ('/quiz/', '');
   };
 
@@ -40,13 +39,13 @@ export default class Quizzes extends Component {
     })
       .then (res => res.json ())
       .then (res => {
-        console.log ('res', res);
         this.setState ({quizzes: res});
       });
   }
 
   onChange (e) {
-    console.log (`checked = ${e.target.checked}`);
+    // console.log (`${e.target.value} checked = ${e.target.checked}`);
+    this.setState ({radioValue: e.target.value});
   }
 
   onPageChange (page) {
@@ -55,6 +54,22 @@ export default class Quizzes extends Component {
     });
     this.props.history.replace ({pathname: '/quiz/' + `${page}`});
   }
+
+  handleSubmit = e => {
+    e.preventDefault ();
+    const tokenObj = getTokenObj ();
+    const body = {answerId: this.state.radioValue};
+    fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz`, {
+      method: 'POST',
+      headers: new Headers ({
+        Authorization: 'bearer ' + tokenObj.id_token,
+        'Content-Type': 'application/json',
+      }),
+
+      Accept: 'application/json',
+      body: JSON.stringify (body),
+    });
+  };
 
   capitalizeFirstLetter (string) {
     return string.charAt (0).toUpperCase () + string.slice (1);
@@ -74,13 +89,22 @@ export default class Quizzes extends Component {
     const answers = quiz.answers.map ((answer, index) => {
       return (
         <p key={index}>
-          <Checkbox onChange={this.onChange} autoFocus={true}>
+          <Radio value={answer.id}>
             <span>{answer.title.toUpperCase ()}.</span>
-          </Checkbox>
+          </Radio>
           {answer.content}
         </p>
       );
     });
+    const answersGroup = (
+      <RadioGroup
+        name="answerOptions"
+        onChange={this.onChange}
+        value={this.state.radioValue}
+      >
+        {answers}
+      </RadioGroup>
+    );
 
     return (
       <div key={quiz.id}>
@@ -91,11 +115,17 @@ export default class Quizzes extends Component {
             title={`${quiz.id}. ${quiz.question_body}`}
             bordered={false}
           >
-            {answers}
-            <Button href={`/quiz/${quiz.id} `} type="primary" htmlType="submit">
-              Submit
-            </Button>
+            {answersGroup}
           </Card>
+          <Button
+            href={`/quiz/${quiz.id} `}
+            type="primary"
+            htmlType="submit"
+            onClick={this.handleSubmit}
+          >
+            Submit
+          </Button>
+
         </Card>
         <Pagination
           defaultCurrent={1}
