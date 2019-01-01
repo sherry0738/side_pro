@@ -64,6 +64,10 @@ class AddNew extends React.Component {
     this.props.form.validateFields ((err, values) => {
       if (!err) {
         console.log ('Received values of form: ', values);
+        fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
+          method: 'POST',
+          body: values,
+        });
       }
     });
   };

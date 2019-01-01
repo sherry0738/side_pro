@@ -38,8 +38,8 @@ export default class Quizzes extends Component {
     this.setState ({name: userInfo.name});
     console.log (userInfo);
     const tokenObj = getTokenObj ();
-    let url = 'http://localhost:3001';
-    fetch (url, {
+
+    fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
       method: 'get',
       headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
       'Content-Type': 'application/json',

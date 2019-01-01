@@ -1,6 +1,5 @@
 export const getQuiz = id_token => {
-  let url = 'http://localhost:3001';
-  fetch (url, {
+  fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
     method: 'get',
     headers: new Headers ({Authorization: 'bearer ' + id_token}),
     'Content-Type': 'application/json',
