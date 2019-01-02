@@ -1,5 +1,6 @@
 import React from 'react';
 import {checkUserExist} from './../utils/AuthUtils';
+import LoginNotification from './../components/LoginNotification';
 import {Card, Form, Input, Button, Icon, Select} from 'antd';
 import './Add.css';
 
@@ -18,6 +19,7 @@ class AddNew extends React.Component {
   componentDidMount () {
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
+      LoginNotification ('warning');
       this.props.history.push ('/');
       return console.log ('NEED login FIRST');
     }

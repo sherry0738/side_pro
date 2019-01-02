@@ -4,13 +4,13 @@ import {
   getDecodedToken,
   checkUserExist,
 } from './../utils/AuthUtils';
+import LoginNotification from './../components/LoginNotification';
 import {Card, Icon, Avatar, Collapse, Radio, Spin} from 'antd';
 import './User.css';
 
 export default class Quizzes extends Component {
   constructor (props) {
     super (props);
-    console.log ('props', this.props);
     this.state = {
       symbolValue: '',
       bGroundValue: '',
@@ -25,6 +25,7 @@ export default class Quizzes extends Component {
   componentDidMount () {
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
+      LoginNotification ('warning');
       this.props.history.push ('/');
       return console.log ('NEED login FIRST');
     }

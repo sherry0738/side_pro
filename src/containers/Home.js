@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import {checkUserExist} from './../utils/AuthUtils';
-import {Button, Card} from 'antd';
+import {Button, Card, notification} from 'antd';
+import LoginNotification from './../components/LoginNotification';
 import 'antd/dist/antd.css';
 import './Home.css';
 
 export default class Home extends Component {
+  constructor (props) {
+    super (props);
+  }
+
   componentDidMount () {
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
+      LoginNotification ('warning');
       this.props.history.push ('/');
       return console.log ('NEED login FIRST');
     }

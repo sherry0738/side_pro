@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
 import {Card, Checkbox, Button, Spin, Pagination, Radio} from 'antd';
+import LoginNotification from './../components/LoginNotification';
 import './Quizzes.css';
 const RadioGroup = Radio.Group;
 
@@ -25,6 +26,7 @@ export default class Quizzes extends Component {
     const {quizId} = this.currentId ();
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
+      LoginNotification ('warning');
       this.props.history.push ('/');
       return console.log ('NEED login FIRST');
     }
@@ -44,18 +46,25 @@ export default class Quizzes extends Component {
   }
 
   onChange (e) {
-    // console.log (`${e.target.value} checked = ${e.target.checked}`);
-    this.setState ({radioValue: e.target.value});
+    console.log (`${e.target.value} checked = ${e.target.checked}`);
+    console.log ('e.target', e.target);
+    this.setState ({
+      radioValue: e.target.value,
+    });
   }
 
   onPageChange (page) {
     this.setState ({
       currentPage: page,
     });
+    console.log ('this.state.currentPage', this.state.currentPage);
     this.props.history.replace ({pathname: '/quiz/' + `${page}`});
   }
 
   handleSubmit = e => {
+    this.setState ({
+      currentPage: this.currentId,
+    });
     e.preventDefault ();
     const tokenObj = getTokenObj ();
     const body = {answerId: this.state.radioValue};
@@ -75,6 +84,8 @@ export default class Quizzes extends Component {
     return string.charAt (0).toUpperCase () + string.slice (1);
   }
   render () {
+    console.log ('this.state.radioValue', this.state.radioValue);
+    console.log ('this.state.currentPage', this.state.currentPage);
     if (!this.state.quizzes) {
       return (
         <div className="example">
@@ -101,6 +112,7 @@ export default class Quizzes extends Component {
         name="answerOptions"
         onChange={this.onChange}
         value={this.state.radioValue}
+        options={this.currentId}
       >
         {answers}
       </RadioGroup>
