@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
-import {Card, Checkbox, Button, Spin, Pagination, Radio} from 'antd';
+import {Card, Button, Spin, Pagination, Radio} from 'antd';
 import LoginNotification from './../components/LoginNotification';
 import './Quizzes.css';
 const RadioGroup = Radio.Group;
@@ -16,19 +16,21 @@ export default class Quizzes extends Component {
       quizzes: '',
       currentPage: 1,
       radioValue: '',
+      idMapOrderNum: [],
     };
   }
+
   currentId = () => {
     return this.props.history.location.pathname.replace ('/quiz/', '');
   };
 
+  getQuizId = () => this.currentId ();
+
   componentDidMount () {
-    const {quizId} = this.currentId ();
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
       LoginNotification ('warning');
-      this.props.history.push ('/');
-      return console.log ('NEED login FIRST');
+      return this.props.history.push ('/guest');
     }
 
     this.props.hasAuth ();
@@ -41,13 +43,26 @@ export default class Quizzes extends Component {
     })
       .then (res => res.json ())
       .then (res => {
-        this.setState ({quizzes: res});
+        const idMaps = res.map (quiz => {
+          return {
+            questionId: quiz.id,
+            orderNum: quiz.order_num,
+          };
+        });
+        this.setState ({
+          quizzes: res,
+          idMapOrderNum: idMaps,
+        });
+        return idMaps;
+      })
+      .then (idMaps => {
+        const idMap = idMaps.find (ele => ele.questionId == this.currentId ());
+        this.setState ({currentPage: idMap.orderNum});
       });
   }
 
   onChange (e) {
     console.log (`${e.target.value} checked = ${e.target.checked}`);
-    console.log ('e.target', e.target);
     this.setState ({
       radioValue: e.target.value,
     });
@@ -67,7 +82,11 @@ export default class Quizzes extends Component {
     });
     e.preventDefault ();
     const tokenObj = getTokenObj ();
-    const body = {answerId: this.state.radioValue};
+    const body = {
+      selectAnswerId: this.state.radioValue,
+      questionId: parseInt (this.getQuizId ()),
+    };
+    console.log ('body', body);
     fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz`, {
       method: 'POST',
       headers: new Headers ({
@@ -77,15 +96,17 @@ export default class Quizzes extends Component {
 
       Accept: 'application/json',
       body: JSON.stringify (body),
-    });
+    })
+      .then (res => res.json ())
+      .then (res => {
+        console.log ('post res', res);
+      });
   };
 
   capitalizeFirstLetter (string) {
     return string.charAt (0).toUpperCase () + string.slice (1);
   }
   render () {
-    console.log ('this.state.radioValue', this.state.radioValue);
-    console.log ('this.state.currentPage', this.state.currentPage);
     if (!this.state.quizzes) {
       return (
         <div className="example">
@@ -112,7 +133,6 @@ export default class Quizzes extends Component {
         name="answerOptions"
         onChange={this.onChange}
         value={this.state.radioValue}
-        options={this.currentId}
       >
         {answers}
       </RadioGroup>

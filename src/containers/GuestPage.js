@@ -40,13 +40,14 @@ export default class GuestPage extends Component {
 
   render () {
     if (Boolean (this.props.isLoggedIn)) {
-      this.props.history.push ('/home');
+      console.log ('need to!!');
+      // this.props.history.push ('/guest');
     }
     const onSuccess = response => {
       // this.props.hasAuth ();
       setTimeout (() => this.props.hasAuth (), 1000);
       localStorage.setItem ('auth', JSON.stringify (response.tokenObj));
-      this.props.history.push ('/home');
+      this.props.history.push ('/');
     };
 
     const onFailure = () => {

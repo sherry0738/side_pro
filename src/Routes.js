@@ -10,8 +10,13 @@ import AppliedRoute from './components/AppliedRoute';
 
 export default ({childProps}) => (
   <Switch>
-    <AppliedRoute path="/" exact component={GuestPage} props={childProps} />
-    <AppliedRoute path="/home" exact component={Home} props={childProps} />
+    <AppliedRoute
+      path="/guest"
+      exact
+      component={GuestPage}
+      props={childProps}
+    />
+    <AppliedRoute path="/" exact component={Home} props={childProps} />
     <AppliedRoute
       path="/quiz/:quizId"
       exact

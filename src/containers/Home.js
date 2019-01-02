@@ -14,7 +14,7 @@ export default class Home extends Component {
     const userExist = Boolean (checkUserExist ()) === true;
     if (!userExist) {
       LoginNotification ('warning');
-      this.props.history.push ('/');
+      this.props.history.push ('/guest');
       return console.log ('NEED login FIRST');
     }
     return this.props.hasAuth ();

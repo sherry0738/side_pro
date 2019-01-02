@@ -1,20 +1,41 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Button} from 'antd';
+import {Redirect} from 'react-router-dom';
 import './Home.css';
 
-const logoutBtn = props => {
-  const logout = props => {
-    localStorage.removeItem ('auth');
-    // this.props.history.push ('/home');
-    // history.push ('/');
+class LogoutBtn extends Component {
+  constructor (props) {
+    super (props);
+    this.logout = this.logout.bind (this);
+    this.state = {
+      redirect: false,
+    };
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      this.props.parentP.resetAuth ();
+      return <Redirect to="/guest" />;
+    }
   };
-  return (
-    <div>
-      <img src={props.avatarUrl} alt="" />
-      <Button onClick={logout} type="primary" size="small">
-        Logout
-      </Button>
-    </div>
-  );
-};
-export default logoutBtn;
+  logout = () => {
+    localStorage.removeItem ('auth');
+    this.setState ({
+      redirect: true,
+    });
+  };
+
+  render () {
+    return (
+      <div>
+        <img src={this.props.avatarUrl} alt="" />
+        <Button onClick={this.logout} type="primary" size="small">
+          Logout
+        </Button>
+        {this.renderRedirect ()}
+
+      </div>
+    );
+  }
+}
+export default LogoutBtn;

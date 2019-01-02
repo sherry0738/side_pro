@@ -21,6 +21,9 @@ class App extends Component {
     const decodedToken = getDecodedToken ();
     this.setState ({isLoggedIn: true, avatarUrl: decodedToken.picture});
   };
+  resetAuth = () => {
+    this.setState ({isLoggedIn: false});
+  };
   // Building a React App-Add the Session to the State
 
   render () {
@@ -28,6 +31,7 @@ class App extends Component {
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
       hasAuth: this.hasAuth,
+      resetAuth: this.resetAuth,
     };
     return (
       <div className="App container">
@@ -48,14 +52,13 @@ class App extends Component {
           <Navbar.Collapse>
             <Nav pullRight>
 
-              <LinkContainer to="/home">
+              <LinkContainer to="/">
                 <NavItem>Home</NavItem>
               </LinkContainer>
 
               <LinkContainer to="/quiz/1">
                 <NavItem>Quiz</NavItem>
               </LinkContainer>
-              {/* {quizPageNum} */}
 
               <LinkContainer to="/add">
                 <NavItem>Create quiz</NavItem>
@@ -78,7 +81,7 @@ class App extends Component {
                         </NavItem>
                       </LinkContainer>
                       <LinkContainer to="#">
-                        <NavItem><LogoutBtn /></NavItem>
+                        <NavItem><LogoutBtn parentP={childProps} /></NavItem>
                       </LinkContainer>
                     </Fragment>
                   </div>
@@ -87,6 +90,7 @@ class App extends Component {
                       <NavItem />
                     </LinkContainer>
                   </Fragment>}
+
             </Nav>
           </Navbar.Collapse>
         </Navbar>
