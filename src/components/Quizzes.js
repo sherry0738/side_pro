@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {getTokenObj, checkUserExist} from './../utils/AuthUtils';
-import {Card, Button, Spin, Pagination, Radio} from 'antd';
+import {Card, Button, Spin, Pagination, Radio, message, Modal} from 'antd';
+import {Redirect} from 'react-router-dom';
 import LoginNotification from './../components/LoginNotification';
 import './Quizzes.css';
 const RadioGroup = Radio.Group;
@@ -17,6 +18,7 @@ export default class Quizzes extends Component {
       currentPage: 1,
       radioValue: '',
       idMapOrderNum: [],
+      redirect: false,
     };
   }
 
@@ -72,21 +74,70 @@ export default class Quizzes extends Component {
     this.setState ({
       currentPage: page,
     });
-    console.log ('this.state.currentPage', this.state.currentPage);
+    // console.log ('this.state.currentPage', this.state.currentPage);
     this.props.history.replace ({pathname: '/quiz/' + `${page}`});
   }
 
+  displayResult = isCorrect => {
+    if (!isCorrect) {
+      return message.error (`Uh-oh! It's incorrect.`);
+    }
+    return message.success (`Awesome! It's correct.`);
+  };
+
+  checkSelectedAnswer = (isCorrect, questionId) => {
+    if (!Boolean (this.isLastQuiz (questionId))) {
+      return this.displayResult (isCorrect);
+    }
+    this.displayResult (isCorrect);
+    this.setState ({
+      redirect: true,
+    });
+    setTimeout (() => {
+      Modal.success ({
+        title: 'Congratulation!! You finished all the quizzes.',
+        content: 'Your scores is some scores here. Would you like to retry?',
+      });
+    }, 1000);
+    return <Redirect to="/" />;
+  };
+
+  findCurrentOrderNum = id => {
+    if (this.state.idMapOrderNum == []) {
+      return false;
+    }
+    const currentQuiz = this.state.idMapOrderNum.find (
+      ele => ele.questionId == id
+    );
+    return currentQuiz.orderNum;
+  };
+
+  isLastQuiz = questionId => {
+    if (this.state.idMapOrderNum == []) {
+      return false;
+    }
+    const orderNums = this.state.idMapOrderNum.map (ele => ele.orderNum);
+    const biggestOrderNum = Math.max (...orderNums);
+    const currentOrderNum = this.findCurrentOrderNum (questionId);
+    if (currentOrderNum == biggestOrderNum) {
+      return true;
+    }
+  };
+
   handleSubmit = e => {
+    e.preventDefault ();
     this.setState ({
       currentPage: this.currentId,
     });
-    e.preventDefault ();
-    const tokenObj = getTokenObj ();
+    if (!this.state.radioValue) {
+      return message.warning ('Please select at least one answer.');
+    }
     const body = {
       selectAnswerId: this.state.radioValue,
       questionId: parseInt (this.getQuizId ()),
     };
-    console.log ('body', body);
+
+    const tokenObj = getTokenObj ();
     fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz`, {
       method: 'POST',
       headers: new Headers ({
@@ -99,7 +150,10 @@ export default class Quizzes extends Component {
     })
       .then (res => res.json ())
       .then (res => {
-        console.log ('post res', res);
+        this.checkSelectedAnswer (res.isCorrect, body.questionId);
+      })
+      .then (error => {
+        console.log ('error', error);
       });
   };
 
@@ -157,7 +211,6 @@ export default class Quizzes extends Component {
           >
             Submit
           </Button>
-
         </Card>
         <Pagination
           defaultCurrent={1}

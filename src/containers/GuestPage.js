@@ -58,7 +58,7 @@ export default class GuestPage extends Component {
     };
 
     return (
-      <div>
+      <div className="guest-container">
         <h1>Welcome to the G Team!</h1>
         <img src={this.state.avatarUrl} alt="" />
         <GoogleLogin

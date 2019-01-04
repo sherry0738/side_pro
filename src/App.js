@@ -39,7 +39,7 @@ class App extends Component {
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/home">
+              <Link to="/">
                 G-Team
                 {/* <img
                   className="galahs"

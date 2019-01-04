@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {checkUserExist} from './../utils/AuthUtils';
-import {Button, Card, notification} from 'antd';
+import {Button, Card} from 'antd';
 import LoginNotification from './../components/LoginNotification';
 import 'antd/dist/antd.css';
 import './Home.css';
@@ -37,7 +37,7 @@ export default class Home extends Component {
           </div>
         </div>
         <div className="topic-container">
-          <Card title="Chose A Topic">
+          <Card title="Choose A Topic">
             <a href="/quiz/1">
               <Card.Grid style={gridStyle}>Onboarding</Card.Grid>
             </a>
