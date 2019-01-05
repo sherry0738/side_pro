@@ -7,10 +7,10 @@ import {
 import orangeRound from './../orangeRound.png';
 import orangeLoop from './../orangeLoop.png';
 import LoginNotification from './../components/LoginNotification';
-import {Card, Icon, Avatar, Collapse, Radio, Switch, Spin} from 'antd';
+import {Card, Icon, Avatar, Collapse, Radio, Spin, Form, Button} from 'antd';
 import './User.css';
 
-export default class Quizzes extends Component {
+class User extends Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -54,6 +54,30 @@ export default class Quizzes extends Component {
         this.setState ({quiz: res.quizzes});
       });
   }
+
+  handleAvatarSubmit = e => {
+    e.preventDefault ();
+    this.props.form.validateFields ((err, values) => {
+      if (err) {
+        console.log ('err on handkleAvatarSubmit', err);
+      }
+      if (!err) {
+        console.log ('Received values of form: ', values);
+        const body = values;
+        const tokenObj = getTokenObj ();
+        fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/user`, {
+          method: 'POST',
+          headers: new Headers ({
+            Authorization: 'bearer ' + tokenObj.id_token,
+            'Content-Type': 'application/json',
+          }),
+
+          Accept: 'application/json',
+          body: JSON.stringify (body),
+        });
+      }
+    });
+  };
 
   checkDefaultAvatar = () => {
     if (!this.props.avatarUrl) {
@@ -150,8 +174,10 @@ export default class Quizzes extends Component {
   };
 
   render () {
+    const {getFieldDecorator} = this.props.form;
     const {Meta} = Card;
     const Panel = Collapse.Panel;
+    const RadioGroup = Radio.Group;
     const customPanelStyle = {
       background: '#f7f7f7',
       borderRadius: 4,
@@ -159,8 +185,6 @@ export default class Quizzes extends Component {
       border: 0,
       overflow: 'hidden',
     };
-
-    const RadioGroup = Radio.Group;
 
     const symbolOptions = [
       {
@@ -219,8 +243,6 @@ export default class Quizzes extends Component {
       },
     ];
 
-    // const avatarCoverClass = this.props.avatarUrl ? 'symbolCover' : 'spinCover';
-
     return (
       <div className="user-container">
         <div className="avatar-box">
@@ -243,32 +265,58 @@ export default class Quizzes extends Component {
         </div>
         <div className="collapse-box">
           <h2>Avatar setting</h2>
-          <Collapse bordered={false}>
+          <Form onSubmit={this.handleAvatarSubmit}>
+            <Collapse bordered={false}>
+              <Panel header="Symbol setting" key="1" style={customPanelStyle}>
+                <Form.Item>
+                  {getFieldDecorator ('avatar_symbol') (
+                    <RadioGroup
+                      options={symbolOptions}
+                      onChange={this.symbolChange}
+                      value={this.state.symbolValue}
+                    />
+                  )}
+                </Form.Item>
+              </Panel>
 
-            <Panel header="Symbol setting" key="1" style={customPanelStyle}>
-              <RadioGroup
-                options={symbolOptions}
-                onChange={this.symbolChange}
-                value={this.state.symbolValue}
-              />
-            </Panel>
-            <Panel header="Background setting" key="2" style={customPanelStyle}>
-              <RadioGroup
-                options={bGroundOptions}
-                onChange={this.bGroundChange}
-                value={this.state.bGroundValue}
-              />
-            </Panel>
-            <Panel header="Border setting" key="3" style={customPanelStyle}>
-              <RadioGroup
-                options={borderOptions}
-                onChange={this.borderChange}
-                value={this.state.borderValue}
-              />
-            </Panel>
-          </Collapse>
+              <Panel
+                header="Background setting"
+                key="2"
+                style={customPanelStyle}
+              >
+                <Form.Item>
+                  {getFieldDecorator ('avatar_background_colour') (
+                    <RadioGroup
+                      options={bGroundOptions}
+                      onChange={this.bGroundChange}
+                      value={this.state.bGroundValue}
+                    />
+                  )}
+                </Form.Item>
+              </Panel>
+
+              <Panel header="Border setting" key="3" style={customPanelStyle}>
+                <Form.Item>
+                  {getFieldDecorator ('avatar_border') (
+                    <RadioGroup
+                      options={borderOptions}
+                      onChange={this.borderChange}
+                      value={this.state.borderValue}
+                    />
+                  )}
+                </Form.Item>
+              </Panel>
+              <Form.Item>
+                <Button className="avatarBtn" type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Collapse>
+          </Form>
         </div>
       </div>
     );
   }
 }
+
+export default Form.create () (User);

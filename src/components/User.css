@@ -18,7 +18,6 @@ div.ant-card-cover {
 
 .avatarContainer {
     position: relative;
-
 }
 .image {
     position: absolute;
@@ -31,10 +30,6 @@ div.ant-card-cover {
     /* border-radius: 2px 2px 0 0; */
 }
 
-.ant-card-cover img .blackAvatar{
-    /* border-radius: 50%; */
-    border-radius: 2px 2px 0 0;
-}
 .bGround {
     opacity: 0.5;
 }
@@ -47,6 +42,6 @@ div.ant-card-cover {
     margin: 0;
 } 
 
-/* .blackAvatar {
-     border-radius: 2px 2px 0 0;
+/* div .ant-btn .avatarBtn {
+    margin-bottom: 10px;
 } */
