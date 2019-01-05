@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react';
 import Routes from './Routes';
 import {getDecodedToken} from './utils/AuthUtils';
 import {Link} from 'react-router-dom';
+import {Avatar} from 'antd';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import LogoutBtn from './containers/LogoutBtn';
@@ -27,6 +28,7 @@ class App extends Component {
   // Building a React App-Add the Session to the State
 
   render () {
+    console.log ('this.props.avatarUrl', this.state.avatarUrl);
     const childProps = {
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
@@ -73,9 +75,9 @@ class App extends Component {
                     <Fragment>
                       <LinkContainer to="#">
                         <NavItem>
-                          <img
+                          <Avatar
                             src={this.state.avatarUrl}
-                            className="avatar-img"
+                            // className="avatar-img"
                             alt="avatar-menu"
                           />
                         </NavItem>

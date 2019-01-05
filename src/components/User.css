@@ -11,3 +11,42 @@
    margin-right: 50px;
    max-width: 100%;
 }
+
+div.ant-card-cover {
+    height: 293.99px;
+}
+
+.avatarContainer {
+    position: relative;
+
+}
+.image {
+    position: absolute;
+    width: 291px;
+    height: 293.99px;
+}
+
+.ant-card-cover img {
+    border-radius: 50%;
+    /* border-radius: 2px 2px 0 0; */
+}
+
+.ant-card-cover img .blackAvatar{
+    /* border-radius: 50%; */
+    border-radius: 2px 2px 0 0;
+}
+.bGround {
+    opacity: 0.5;
+}
+
+.spinCover {
+    text-align: center;
+    background-color: #eee8e8;
+    border-radius: 4%;
+    padding: 80px;
+    margin: 0;
+} 
+
+/* .blackAvatar {
+     border-radius: 2px 2px 0 0;
+} */

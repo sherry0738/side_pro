@@ -4,8 +4,10 @@ import {
   getDecodedToken,
   checkUserExist,
 } from './../utils/AuthUtils';
+import orangeRound from './../orangeRound.png';
+import orangeLoop from './../orangeLoop.png';
 import LoginNotification from './../components/LoginNotification';
-import {Card, Icon, Avatar, Collapse, Radio, Spin} from 'antd';
+import {Card, Icon, Avatar, Collapse, Radio, Switch, Spin} from 'antd';
 import './User.css';
 
 export default class Quizzes extends Component {
@@ -30,6 +32,7 @@ export default class Quizzes extends Component {
       return console.log ('NEED login FIRST');
     }
     this.props.hasAuth ();
+    console.log ('this.props.avatarUrl', this.props.avatarUrl);
     this.setState ({
       avatarView: this.props.avatarUrl
         ? this.props.avatarUrl
@@ -52,38 +55,98 @@ export default class Quizzes extends Component {
       });
   }
 
-  handleAvatarDisplay = value => {
-    console.log ('value for avatar view', value);
-    // const validatedUrl = ValidUrl (value);
-    this.setState ({avatarView: value});
+  checkDefaultAvatar = () => {
+    if (!this.props.avatarUrl) {
+      console.log ('');
+      return (
+        <div className="spinCover">
+          <Spin size="small" />;
+        </div>
+      );
+    }
+    return <img alt="avatar-view" src={this.state.avatarView} />;
   };
-  toggleInput = () => {};
-  handleInput = e => {
-    console.log ('L74', e.target.value);
+
+  handleAvatarDisplay = (symbolValue, bGroundValue, borderValue) => {
+    if (!symbolValue || !bGroundValue || !borderValue) {
+      return this.checkDefaultAvatar ();
+    }
+    //console.log ('value for avatar view', value);
+    // const validatedUrl = ValidUrl (value);
+    console.log ('this.state.symbolValue', symbolValue);
+    console.log ('this.state.bGroundValue', bGroundValue);
+    console.log ('this.state.borderValue', borderValue);
+
+    return (
+      <div className="avatarContainer">
+        <img className="symbol image" src={symbolValue} />
+        <img className="bGround image" src={bGroundValue} />
+        <img className="border image" src={borderValue} />
+      </div>
+    );
   };
 
   symbolChange = e => {
-    console.log ('symbol checked', e.target.value);
+    // console.log ('symbol checked', e.target.value);
     this.setState ({
       symbolValue: e.target.value,
     });
-    this.handleAvatarDisplay (this.state.symbolValue);
+    this.handleAvatarDisplay (
+      e.target.value,
+      this.state.bGroundValue,
+      this.state.borderValue
+    );
   };
 
   bGroundChange = e => {
-    console.log ('bGround checked', e.target.value);
+    // console.log ('bGround checked', e.target.value);
     this.setState ({
       bGroundValue: e.target.value,
     });
-    this.handleAvatarDisplay (this.state.bGroundValue);
+    this.handleAvatarDisplay (
+      this.state.symbolValue,
+      e.target.value,
+      this.state.borderValue
+    );
   };
 
   borderChange = e => {
-    console.log ('border checked', e.target.value);
+    // console.log ('border checked', e.target.value);
     this.setState ({
       borderValue: e.target.value,
     });
-    this.handleAvatarDisplay (this.state.borderValue);
+    this.handleAvatarDisplay (
+      this.state.symbolValue,
+      this.state.bGroundValue,
+      e.target.value
+    );
+  };
+
+  getCustomizedAvatar = () => {
+    if (
+      !this.state.symbolValue &&
+      !this.state.bGroundValue &&
+      !this.state.borderValue
+    ) {
+      console.log ('here');
+      return (
+        <div>
+          <img
+            alt="avatar-view"
+            style={{width: 294}}
+            src={this.state.avatarView}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="avatarContainer">
+        <img className="symbol image" src={this.state.symbolValue} />
+        <img className="bGround image" src={this.state.bGroundValue} />
+        <img className="border image" src={this.state.borderValue} />
+      </div>
+    );
   };
 
   render () {
@@ -95,14 +158,6 @@ export default class Quizzes extends Component {
       marginBottom: 24,
       border: 0,
       overflow: 'hidden',
-    };
-
-    const avatarViewStyle = {
-      textAlign: 'center',
-      background: '#eee8e8',
-      borderRadius: 4,
-      padding: 80,
-      margin: 0,
     };
 
     const RadioGroup = Radio.Group;
@@ -124,54 +179,64 @@ export default class Quizzes extends Component {
         value: 'https://ih0.redbubble.net/image.66502006.2903/mp,550x550,matte,ffffff,t.3u3.jpg',
       },
       {
-        label: 'Flag',
+        label: 'Shield',
         value: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3MBz4Qmpuux-LvYcEC89cG_gJSlmlQUkWGhzUVcr4kn9-bfIY',
       },
       {
-        label: 'Flag2',
+        label: 'G&R',
         value: 'http://sf.co.ua/14/04/wallpaper-743589.jpg',
       },
       {
-        label: 'Flag3',
+        label: 'Hungary',
         value: 'http://footage.framepool.com/shotimg/qf/139147502-hungarian-flag-fabric-waving-sway-symbol.jpg',
       },
     ];
 
     const borderOptions = [
       {
-        label: 'Classic',
-        value: 'https://img00.deviantart.net/954e/i/2008/134/b/b/border_iii_by_struckdumb.jpg',
+        label: 'Yellow chain',
+        value: 'http://shopforclipart.com/images/wedding-ring-images-clipart/10.jpg',
       },
       {
-        label: 'Modern',
-        value: 'https://dumielauxepices.net/sites/default/files/photography-clipart-borders-714149-3465520.jpg',
+        label: 'green',
+        value: 'https://requestreduce.org/images/christmas-concert-clipart-16.png',
+      },
+      {
+        label: 'Blue chain',
+        value: 'https://marketplace.canva.com/MACz7hEgGMk/1/screen/canva-border%2C-ring%2C-frame%2C-design%2C-circle%2C-decoration%2C-round-MACz7hEgGMk.png',
+      },
+      {
+        label: 'Orange round',
+        value: orangeRound,
+      },
+      {
+        label: 'Orange Loop',
+        value: orangeLoop,
+      },
+      {
+        label: 'Fire',
+        value: 'https://c7.uihere.com/files/323/30/535/light-fire-flame-burst-of-fire-round-border.jpg',
       },
     ];
+
+    // const avatarCoverClass = this.props.avatarUrl ? 'symbolCover' : 'spinCover';
 
     return (
       <div className="user-container">
         <div className="avatar-box">
           <Card
             style={{width: 294}}
-            cover={
-              this.state.avatarView
-                ? <img
-                    alt="avatar-view"
-                    style={{width: 294}}
-                    src={this.state.avatarView}
-                  />
-                : <Spin size="small" style={avatarViewStyle} />
-            }
+            cover={this.getCustomizedAvatar ()}
             actions={[
               <Icon type="setting" />,
-              <Icon type="edit" onClick={this.toggleInput} />,
+              <Icon type="edit" />,
               <Icon type="ellipsis" />,
             ]}
           >
             <Meta
               avatar={<Avatar src={this.props.avatarUrl} />}
               title={this.state.name}
-              description={this.handleInput}
+              description="scores here"
               scores={this.state.scores}
             />
           </Card>
@@ -179,25 +244,26 @@ export default class Quizzes extends Component {
         <div className="collapse-box">
           <h2>Avatar setting</h2>
           <Collapse bordered={false}>
+
             <Panel header="Symbol setting" key="1" style={customPanelStyle}>
               <RadioGroup
                 options={symbolOptions}
                 onChange={this.symbolChange}
-                symbolValue={this.state.symbolValue}
+                value={this.state.symbolValue}
               />
             </Panel>
             <Panel header="Background setting" key="2" style={customPanelStyle}>
               <RadioGroup
                 options={bGroundOptions}
                 onChange={this.bGroundChange}
-                bGroundValue={this.state.bGroundValue}
+                value={this.state.bGroundValue}
               />
             </Panel>
             <Panel header="Border setting" key="3" style={customPanelStyle}>
               <RadioGroup
                 options={borderOptions}
                 onChange={this.borderChange}
-                borderValue={this.state.borderValue}
+                value={this.state.borderValue}
               />
             </Panel>
           </Collapse>
