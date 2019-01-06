@@ -7,7 +7,17 @@ import {
 import orangeRound from './../orangeRound.png';
 import orangeLoop from './../orangeLoop.png';
 import LoginNotification from './../components/LoginNotification';
-import {Card, Icon, Avatar, Collapse, Radio, Spin, Form, Button} from 'antd';
+import {
+  Card,
+  Icon,
+  Avatar,
+  Collapse,
+  Radio,
+  message,
+  Spin,
+  Form,
+  Button,
+} from 'antd';
 import './User.css';
 
 class User extends Component {
@@ -21,6 +31,7 @@ class User extends Component {
       name: '',
       description: '',
       scores: 0,
+      newAvatar: '',
     };
   }
 
@@ -62,7 +73,11 @@ class User extends Component {
         console.log ('err on handkleAvatarSubmit', err);
       }
       if (!err) {
-        console.log ('Received values of form: ', values);
+        if (!values) {
+          return message.warning (
+            'Please select new Avatar setting before submitting your request.'
+          );
+        }
         const body = values;
         const tokenObj = getTokenObj ();
         fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/user`, {
@@ -74,14 +89,25 @@ class User extends Component {
 
           Accept: 'application/json',
           body: JSON.stringify (body),
-        });
+        })
+          .then (res => res.json ())
+          .then (res => {
+            if (!res) {
+              return message.error ('Update avatar failed! Please try again.');
+            }
+            this.setState ({newAvatar: res});
+            // this.changeAvatar (res);
+            return message.success ('Your avatar updated successfully!');
+          })
+          .then (error => {
+            console.log ('error', error);
+          });
       }
     });
   };
 
   checkDefaultAvatar = () => {
     if (!this.props.avatarUrl) {
-      console.log ('');
       return (
         <div className="spinCover">
           <Spin size="small" />;
@@ -91,27 +117,29 @@ class User extends Component {
     return <img alt="avatar-view" src={this.state.avatarView} />;
   };
 
+  setAvatar = (symbol, backGround, border) => (
+    <div className="avatarContainer">
+      <img className="symbol image" src={symbol} />
+      <img className="bGround image" src={backGround} />
+      <img className="border image" src={border} />
+    </div>
+  );
+
   handleAvatarDisplay = (symbolValue, bGroundValue, borderValue) => {
     if (!symbolValue || !bGroundValue || !borderValue) {
       return this.checkDefaultAvatar ();
     }
     //console.log ('value for avatar view', value);
-    // const validatedUrl = ValidUrl (value);
-    console.log ('this.state.symbolValue', symbolValue);
-    console.log ('this.state.bGroundValue', bGroundValue);
-    console.log ('this.state.borderValue', borderValue);
-
     return (
       <div className="avatarContainer">
-        <img className="symbol image" src={symbolValue} />
-        <img className="bGround image" src={bGroundValue} />
-        <img className="border image" src={borderValue} />
+        <img className="symbol image" src={this.state.symbolValue} />
+        <img className="bGround image" src={this.state.bGroundValue} />
+        <img className="border image" src={this.state.borderValue} />
       </div>
     );
   };
 
   symbolChange = e => {
-    // console.log ('symbol checked', e.target.value);
     this.setState ({
       symbolValue: e.target.value,
     });
@@ -123,7 +151,6 @@ class User extends Component {
   };
 
   bGroundChange = e => {
-    // console.log ('bGround checked', e.target.value);
     this.setState ({
       bGroundValue: e.target.value,
     });
@@ -135,7 +162,6 @@ class User extends Component {
   };
 
   borderChange = e => {
-    // console.log ('border checked', e.target.value);
     this.setState ({
       borderValue: e.target.value,
     });
@@ -152,7 +178,6 @@ class User extends Component {
       !this.state.bGroundValue &&
       !this.state.borderValue
     ) {
-      console.log ('here');
       return (
         <div>
           <img
@@ -163,13 +188,10 @@ class User extends Component {
         </div>
       );
     }
-
-    return (
-      <div className="avatarContainer">
-        <img className="symbol image" src={this.state.symbolValue} />
-        <img className="bGround image" src={this.state.bGroundValue} />
-        <img className="border image" src={this.state.borderValue} />
-      </div>
+    return this.setAvatar (
+      this.state.symbolValue,
+      this.state.bGroundValue,
+      this.state.borderValue
     );
   };
 
@@ -267,6 +289,7 @@ class User extends Component {
           <h2>Avatar setting</h2>
           <Form onSubmit={this.handleAvatarSubmit}>
             <Collapse bordered={false}>
+
               <Panel header="Symbol setting" key="1" style={customPanelStyle}>
                 <Form.Item>
                   {getFieldDecorator ('avatar_symbol') (
