@@ -11,36 +11,36 @@ export default class GuestPage extends Component {
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
-      quiz: '',
     };
   }
 
-  componentDidMount () {
-    const tokenObj = getTokenObj ();
+  // getUser () {
+    // const tokenObj = getTokenObj ();
+    // console.log ('user in getUser()', tokenObj);
+    // if (tokenObj && tokenObj.id_token) {
+    //   // const quiz = getQuiz (tokenObj.id_token);
+    //   this.props.hasAuth ();
+    //   const id_token = tokenObj.id_token;
 
-    if (tokenObj && tokenObj.id_token) {
-      // const quiz = getQuiz (tokenObj.id_token);
-      this.props.hasAuth ();
-      const id_token = tokenObj.id_token;
-
-      fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
-        method: 'get',
-        headers: new Headers ({Authorization: 'bearer ' + id_token}),
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      })
-        .then (res => res.json ())
-        .then (res => {
-          this.setState ({quiz: res.quizzes});
-        });
-    } else {
-      console.log ('need to login first!!');
-    }
-  }
+    //   fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
+    //     method: 'get',
+    //     headers: new Headers ({Authorization: 'bearer ' + id_token}),
+    //     'Content-Type': 'application/json',
+    //     Accept: 'application/json',
+    //   })
+    //     .then (res => res.json ())
+    //     .then (res => {
+    //       console.log ('guestPage res--------', res);
+    //       // this.setState ({quiz: res.quizzes});
+    //     });
+    // } else {
+    //   console.log ('Guest page ---need to login first!!');
+    // }
+  // }
 
   render () {
     if (Boolean (this.props.isLoggedIn)) {
-      console.log ('need to!!');
+      console.log ('user logged in');
       // this.props.history.push ('/guest');
     }
     const onSuccess = response => {
@@ -66,6 +66,7 @@ export default class GuestPage extends Component {
           buttonText="Login"
           onSuccess={onSuccess}
           onFailure={onFailure}
+          // onRequest={this.getUser}
         />
       </div>
     );

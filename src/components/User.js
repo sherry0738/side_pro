@@ -19,6 +19,8 @@ import {
   Button,
 } from 'antd';
 import './User.css';
+import moment from 'moment';
+// import moment = require('moment');
 
 class User extends Component {
   constructor (props) {
@@ -207,6 +209,11 @@ class User extends Component {
       border: 0,
       overflow: 'hidden',
     };
+    // const isValidDate = date => moment (date).isAfter (moment (0));
+    // const lastest = moment ('20171501');
+    // // const formattedDate = lastest.format ('YYYYMMDD');
+    // console.log ('lastest', lastest);
+    // // console.log ('formattedDate', formattedDate);
 
     const symbolOptions = [
       {
@@ -221,7 +228,7 @@ class User extends Component {
 
     const bGroundOptions = [
       {
-        label: 'America',
+        label: 'France',
         value: 'https://ih0.redbubble.net/image.66502006.2903/mp,550x550,matte,ffffff,t.3u3.jpg',
       },
       {

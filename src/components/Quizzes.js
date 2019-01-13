@@ -10,7 +10,7 @@ export default class Quizzes extends Component {
   constructor (props) {
     super (props);
     this.onPageChange = this.onPageChange.bind (this);
-    this.onChange = this.onChange.bind (this);
+    this.handleRadioChange = this.handleRadioChange.bind (this);
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
@@ -19,6 +19,9 @@ export default class Quizzes extends Component {
       radioValue: '',
       idMapOrderNum: [],
       redirect: false,
+      isSubmitted: false,
+      radioDisabled: false,
+      btnDisabled: false,
     };
   }
 
@@ -37,7 +40,7 @@ export default class Quizzes extends Component {
 
     this.props.hasAuth ();
     const tokenObj = getTokenObj ();
-    fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
+    fetch (`${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz`, {
       method: 'get',
       headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
       'Content-Type': 'application/json',
@@ -59,15 +62,23 @@ export default class Quizzes extends Component {
       })
       .then (idMaps => {
         const idMap = idMaps.find (ele => ele.questionId == this.currentId ());
-        this.setState ({currentPage: idMap.orderNum});
+        this.setState ({
+          currentPage: idMap.orderNum,
+          radioDisabled: false,
+          btnDisabled: false,
+        });
       });
   }
 
-  onChange (e) {
+  handleRadioChange (e) {
+    // const isSubmitted = this.state.isSubmitted;
     console.log (`${e.target.value} checked = ${e.target.checked}`);
     this.setState ({
       radioValue: e.target.value,
     });
+    // if (Boolean (isSubmitted)) {
+    //   this.setState ({radioDisabled: true, btnDisabled: true});
+    // }
   }
 
   onPageChange (page) {
@@ -148,12 +159,21 @@ export default class Quizzes extends Component {
       Accept: 'application/json',
       body: JSON.stringify (body),
     })
-      .then (res => res.json ())
       .then (res => {
-        this.checkSelectedAnswer (res.isCorrect, body.questionId);
+        if (res.ok) {
+          return res.json ();
+        } else {
+          res.json ().then (error => {
+            message.error (error.error);
+          });
+          return null;
+        }
       })
-      .then (error => {
-        console.log ('error', error);
+      .then (res => {
+        if (res) {
+          this.setState ({isSubmitted: true});
+          this.checkSelectedAnswer (res.isCorrect, body.questionId);
+        }
       });
   };
 
@@ -185,8 +205,9 @@ export default class Quizzes extends Component {
     const answersGroup = (
       <RadioGroup
         name="answerOptions"
-        onChange={this.onChange}
+        onChange={this.handleRadioChange}
         value={this.state.radioValue}
+        disabled={this.state.radioDisabled}
       >
         {answers}
       </RadioGroup>
@@ -208,6 +229,7 @@ export default class Quizzes extends Component {
             type="primary"
             htmlType="submit"
             onClick={this.handleSubmit}
+            disabled={this.state.btnDisabled}
           >
             Submit
           </Button>

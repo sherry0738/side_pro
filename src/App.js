@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import Routes from './Routes';
-import {getDecodedToken} from './utils/AuthUtils';
+import {getTokenObj, getDecodedToken} from './utils/AuthUtils';
 import {Link} from 'react-router-dom';
 import {Avatar} from 'antd';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
@@ -15,8 +15,36 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       avatarUrl: '',
+      symbolUrl: '',
+      bGroundUrl: '',
+      borderUrl: '',
     };
   }
+
+  componentDidMount () {
+    const tokenObj = getTokenObj ();
+    console.log ('tokenObj', tokenObj);
+    fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
+      method: 'get',
+      headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    })
+      .then (res => res.json ())
+      .then (res => {
+        console.log ('app res', res);
+        // this.setState({symbolUrl:})
+        // this.setState ({quiz: res.quizzes});
+      });
+  }
+
+  // setAvatar = (symbol, backGround, border) => (
+  //   <div className="avatarContainer">
+  //     <img className="symbol image" src={symbol} />
+  //     <img className="bGround image" src={backGround} />
+  //     <img className="border image" src={border} />
+  //   </div>
+  // );
 
   hasAuth = () => {
     const decodedToken = getDecodedToken ();
