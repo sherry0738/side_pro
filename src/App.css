@@ -28,3 +28,21 @@ a {
   width:15%;
   border-radius: 50%;
 }
+
+.avatarBox {
+  position: relative;
+  right: 40px;
+  top: 4px;
+  margin: 0 30px;
+}
+.avatarBox .image {
+  position: absolute;
+  
+  width: 47px;
+  height: 47px;
+  border-radius: 50%;
+}
+
+.avatarBox .image .bGround {
+  opacity: 0.5;
+}

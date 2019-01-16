@@ -14,30 +14,6 @@ export default class GuestPage extends Component {
     };
   }
 
-  // getUser () {
-    // const tokenObj = getTokenObj ();
-    // console.log ('user in getUser()', tokenObj);
-    // if (tokenObj && tokenObj.id_token) {
-    //   // const quiz = getQuiz (tokenObj.id_token);
-    //   this.props.hasAuth ();
-    //   const id_token = tokenObj.id_token;
-
-    //   fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
-    //     method: 'get',
-    //     headers: new Headers ({Authorization: 'bearer ' + id_token}),
-    //     'Content-Type': 'application/json',
-    //     Accept: 'application/json',
-    //   })
-    //     .then (res => res.json ())
-    //     .then (res => {
-    //       console.log ('guestPage res--------', res);
-    //       // this.setState ({quiz: res.quizzes});
-    //     });
-    // } else {
-    //   console.log ('Guest page ---need to login first!!');
-    // }
-  // }
-
   render () {
     if (Boolean (this.props.isLoggedIn)) {
       console.log ('user logged in');

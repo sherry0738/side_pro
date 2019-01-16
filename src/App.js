@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import {Avatar} from 'antd';
 import {Nav, Navbar, NavItem} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
+import LoginNotification from './components/LoginNotification';
 import LogoutBtn from './containers/LogoutBtn';
 import './App.css';
 
@@ -14,6 +15,7 @@ class App extends Component {
 
     this.state = {
       isLoggedIn: false,
+      isSetAvatar: false,
       avatarUrl: '',
       symbolUrl: '',
       bGroundUrl: '',
@@ -23,7 +25,11 @@ class App extends Component {
 
   componentDidMount () {
     const tokenObj = getTokenObj ();
-    console.log ('tokenObj', tokenObj);
+
+    if (!tokenObj) {
+      return LoginNotification ('warning');
+    }
+
     fetch (process.env.REACT_APP_SIDE_PROJECT_API_URI, {
       method: 'get',
       headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
@@ -33,18 +39,44 @@ class App extends Component {
       .then (res => res.json ())
       .then (res => {
         console.log ('app res', res);
-        // this.setState({symbolUrl:})
-        // this.setState ({quiz: res.quizzes});
+        this.checkAvatarSet (res.avaSymobol, res.avaBGround, res.avaBorder);
       });
   }
 
-  // setAvatar = (symbol, backGround, border) => (
-  //   <div className="avatarContainer">
-  //     <img className="symbol image" src={symbol} />
-  //     <img className="bGround image" src={backGround} />
-  //     <img className="border image" src={border} />
-  //   </div>
-  // );
+  avatarSet = (symbol, backGround, border) => {
+    console.log ('symbol3', symbol);
+    console.log ('backGround3', backGround);
+    console.log ('border3', border);
+    if (!symbol && !backGround && !border) {
+      return console.log ('You have not set your avatar yet!');
+    }
+    return (
+      <div className="avatarBox">
+        <img className="symbol image" src={symbol} />
+        <img className="bGround image" src={backGround} />
+        <img className="border image" src={border} />
+      </div>
+    );
+  };
+
+  checkAvatarSet (symbol, backGround, border) {
+    if (!symbol && !backGround && !border) {
+      return console.log ('You have not set your avatar yet!');
+    }
+    this.setState ({
+      isSetAvatar: true,
+      symbolUrl: symbol,
+      bGroundUrl: backGround,
+      borderUrl: border,
+    });
+    console.log ('symbol-2', this.state.symbolUrl);
+    console.log ('backGround-2', this.state.bGroundUrl);
+    console.log ('border-2', this.state.borderUrl);
+  }
+
+  hasSetAvatar = () => {
+    this.setState ({isSetAvatar: true});
+  };
 
   hasAuth = () => {
     const decodedToken = getDecodedToken ();
@@ -56,13 +88,41 @@ class App extends Component {
   // Building a React App-Add the Session to the State
 
   render () {
+    console.log ('symbol-render', this.state.symbolUrl);
+    console.log ('backGround-render', this.state.bGroundUrl);
+    console.log ('border-render', this.state.borderUrl);
     console.log ('this.props.avatarUrl', this.state.avatarUrl);
+    if (
+      !this.state.symbolUrl &&
+      !this.state.bGroundUrl &&
+      !this.state.borderUrl
+    ) {
+      return null;
+    }
+
+    const getNewAvatar = this.avatarSet (
+      this.state.symbolUrl,
+      this.state.bGroundUrl,
+      this.state.borderUrl
+    );
+
+    const defaultAvatar = () => (
+      <Avatar
+        src={this.state.avatarUrl}
+        // className="avatar-img"
+        alt="avatar-menu"
+      />
+    );
     const childProps = {
       isLoggedIn: this.state.isLoggedIn,
       avatarUrl: this.state.avatarUrl,
+      isSetAvatar: this.state.isSetAvatar,
       hasAuth: this.hasAuth,
       resetAuth: this.resetAuth,
+      hasSetAvatar: this.hasSetAvatar,
+      getNewAvatar: this.avatarSet,
     };
+
     return (
       <div className="App container">
 
@@ -97,17 +157,15 @@ class App extends Component {
               <LinkContainer to="/user">
                 <NavItem>User</NavItem>
               </LinkContainer>
-
+              {/* <AvatarSet childProps={childProps} /> */}
               {Boolean (this.state.isLoggedIn)
                 ? <div className="menu-box">
                     <Fragment>
                       <LinkContainer to="#">
                         <NavItem>
-                          <Avatar
-                            src={this.state.avatarUrl}
-                            // className="avatar-img"
-                            alt="avatar-menu"
-                          />
+                          {Boolean (this.state.isSetAvatar)
+                            ? getNewAvatar
+                            : defaultAvatar}
                         </NavItem>
                       </LinkContainer>
                       <LinkContainer to="#">
@@ -120,7 +178,6 @@ class App extends Component {
                       <NavItem />
                     </LinkContainer>
                   </Fragment>}
-
             </Nav>
           </Navbar.Collapse>
         </Navbar>
