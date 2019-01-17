@@ -13,14 +13,19 @@ import {
   Avatar,
   Collapse,
   Radio,
+  Switch,
   message,
   Spin,
   Form,
+  Input,
   Button,
+  Tabs,
 } from 'antd';
 import './User.css';
 import moment from 'moment';
 // import moment = require('moment');
+
+const FormItem = Form.Item;
 
 class User extends Component {
   constructor (props) {
@@ -197,6 +202,13 @@ class User extends Component {
     );
   };
 
+  callback (key) {
+    console.log (key);
+  }
+
+  switchOnChange (checked) {
+    console.log (checked);
+  }
   render () {
     const {getFieldDecorator} = this.props.form;
     const {Meta} = Card;
@@ -272,6 +284,8 @@ class User extends Component {
       },
     ];
 
+    const TabPane = Tabs.TabPane;
+
     return (
       <div className="user-container">
         <div className="avatar-box">
@@ -293,56 +307,131 @@ class User extends Component {
           </Card>
         </div>
         <div className="collapse-box">
-          <h2>Avatar setting</h2>
-          <Form onSubmit={this.handleAvatarSubmit}>
-            <Collapse bordered={false}>
+          <Tabs defaultActiveKey="1" onChange={this.callback}>
+            <TabPane tab="Avatar setting" key="1">
+              <Form onSubmit={this.handleAvatarSubmit}>
+                <Collapse bordered={false}>
 
-              <Panel header="Symbol setting" key="1" style={customPanelStyle}>
+                  <Panel
+                    header="Symbol setting"
+                    key="1"
+                    style={customPanelStyle}
+                  >
+                    <Form.Item>
+                      {getFieldDecorator ('avatar_symbol') (
+                        <RadioGroup
+                          options={symbolOptions}
+                          onChange={this.symbolChange}
+                          value={this.state.symbolValue}
+                        />
+                      )}
+                    </Form.Item>
+                  </Panel>
+
+                  <Panel
+                    header="Background setting"
+                    key="2"
+                    style={customPanelStyle}
+                  >
+                    <Form.Item>
+                      {getFieldDecorator ('avatar_background_colour') (
+                        <RadioGroup
+                          options={bGroundOptions}
+                          onChange={this.bGroundChange}
+                          value={this.state.bGroundValue}
+                        />
+                      )}
+                    </Form.Item>
+                  </Panel>
+
+                  <Panel
+                    header="Border setting"
+                    key="3"
+                    style={customPanelStyle}
+                  >
+                    <Form.Item>
+                      {getFieldDecorator ('avatar_border') (
+                        <RadioGroup
+                          options={borderOptions}
+                          onChange={this.borderChange}
+                          value={this.state.borderValue}
+                        />
+                      )}
+                    </Form.Item>
+                  </Panel>
+                </Collapse>
                 <Form.Item>
-                  {getFieldDecorator ('avatar_symbol') (
-                    <RadioGroup
-                      options={symbolOptions}
-                      onChange={this.symbolChange}
-                      value={this.state.symbolValue}
-                    />
-                  )}
+                  <Button
+                    className="avatarBtn"
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Submit
+                  </Button>
                 </Form.Item>
-              </Panel>
 
-              <Panel
-                header="Background setting"
-                key="2"
-                style={customPanelStyle}
+              </Form>
+            </TabPane>
+
+            <TabPane tab="Privacy" key="2">
+              <Form
+                hideRequiredMark={false}
+                layout="horizontal"
+                className="ant-advanced-search-form"
+                // onSubmit={this.handleSubmit}
               >
-                <Form.Item>
-                  {getFieldDecorator ('avatar_background_colour') (
-                    <RadioGroup
-                      options={bGroundOptions}
-                      onChange={this.bGroundChange}
-                      value={this.state.bGroundValue}
-                    />
-                  )}
-                </Form.Item>
-              </Panel>
-
-              <Panel header="Border setting" key="3" style={customPanelStyle}>
-                <Form.Item>
-                  {getFieldDecorator ('avatar_border') (
-                    <RadioGroup
-                      options={borderOptions}
-                      onChange={this.borderChange}
-                      value={this.state.borderValue}
-                    />
-                  )}
-                </Form.Item>
-              </Panel>
-              <Form.Item>
+                <Collapse bordered={false}>
+                  <Panel
+                    header="Change password"
+                    key="1"
+                    style={customPanelStyle}
+                  >
+                    <FormItem label="Old password" required={true}>
+                      <Input />
+                    </FormItem>
+                    <FormItem label="New password" required={true}>
+                      <Input />
+                    </FormItem>
+                    <FormItem label="Confirm password" required={true}>
+                      <Input />
+                    </FormItem>
+                  </Panel>
+                  <Panel
+                    header="Manage public profile"
+                    key="1"
+                    style={customPanelStyle}
+                  >
+                    <FormItem label="Display default avatar">
+                      <Switch defaultChecked onChange={this.switchOnChange} />
+                    </FormItem>
+                    <FormItem label="Everyone can see my profile">
+                      <Switch defaultChecked onChange={this.switchOnChange} />
+                    </FormItem>
+                    <FormItem label="Only team member can see my profile">
+                      <Switch defaultChecked onChange={this.switchOnChange} />
+                    </FormItem>
+                  </Panel>
+                </Collapse>
                 <Button className="avatarBtn" type="primary" htmlType="submit">
                   Submit
                 </Button>
-              </Form.Item>
-            </Collapse>
-          </Form>
+              </Form>
+            </TabPane>
+
+            <TabPane tab="Account Management" key="3">
+              <Collapse bordered={false}>
+                <Panel
+                  header="Update your detail"
+                  key="1"
+                  style={customPanelStyle}
+                />
+                <Panel header="Site setting" key="2" style={customPanelStyle} />
+              </Collapse>
+              <Button className="avatarBtn" type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </TabPane>
+          </Tabs>
         </div>
       </div>
     );

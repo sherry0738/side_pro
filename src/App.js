@@ -161,7 +161,7 @@ class App extends Component {
               {Boolean (this.state.isLoggedIn)
                 ? <div className="menu-box">
                     <Fragment>
-                      <LinkContainer to="#">
+                      <LinkContainer to="/user">
                         <NavItem>
                           {Boolean (this.state.isSetAvatar)
                             ? getNewAvatar
