@@ -101,16 +101,45 @@ export default class Quizzes extends Component {
       return this.displayResult (isCorrect);
     }
     this.displayResult (isCorrect);
+
+    // call api
+    const tokenObj = getTokenObj ();
+
+    if (!tokenObj) {
+      return LoginNotification ('warning');
+    }
+    fetch (
+      `${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz/result/onboarding`,
+      {
+        method: 'get',
+        headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }
+    )
+      .then (res => res.json ())
+      .then (res => {
+        return this.getTotalScores (res);
+      })
+      .then (totalScores => {
+        setTimeout (() => {
+          Modal.success ({
+            title: 'Congratulation!! You finished all the quizzes.',
+            content: `You got total ${totalScores} scores. Would you like to retry?`,
+          });
+        }, 1000);
+      });
+
     this.setState ({
       redirect: true,
     });
-    setTimeout (() => {
-      Modal.success ({
-        title: 'Congratulation!! You finished all the quizzes.',
-        content: 'Your scores is some scores here. Would you like to retry?',
-      });
-    }, 1000);
     return <Redirect to="/" />;
+  };
+
+  getTotalScores = scores => {
+    let total = 0;
+    scores.forEach (obj => (total = obj.scores + total));
+    return total;
   };
 
   findCurrentOrderNum = id => {

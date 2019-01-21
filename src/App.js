@@ -20,6 +20,7 @@ class App extends Component {
       symbolUrl: '',
       bGroundUrl: '',
       borderUrl: '',
+      scores: 0,
     };
   }
 
@@ -38,8 +39,24 @@ class App extends Component {
     })
       .then (res => res.json ())
       .then (res => {
-        console.log ('app res', res);
+        console.log ('app / ---res ', res);
         this.checkAvatarSet (res.avaSymobol, res.avaBGround, res.avaBorder);
+        // this.checkScores (res.scores);
+      });
+
+    fetch (
+      `${process.env.REACT_APP_SIDE_PROJECT_API_URI}/quiz/result/onboarding`,
+      {
+        method: 'get',
+        headers: new Headers ({Authorization: 'bearer ' + tokenObj.id_token}),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }
+    )
+      .then (res => res.json ())
+      .then (res => {
+        console.log ('app /quiz/result ----res', res);
+        this.checkScores (res);
       });
   }
 
@@ -58,6 +75,11 @@ class App extends Component {
       </div>
     );
   };
+
+  checkScores (result) {
+    console.log ('result in checkScores-----', result);
+    result.filter ((answer, index) => {});
+  }
 
   checkAvatarSet (symbol, backGround, border) {
     if (!symbol && !backGround && !border) {

@@ -34,11 +34,11 @@ class User extends Component {
       symbolValue: '',
       bGroundValue: '',
       borderValue: '',
-      avatarView: '',
+      avatarView: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA_oX0Xg-tJvcxkxwvc3C4AYnlJDJfvpWTQ5jFnUR7yAjDqtQS',
       name: '',
       description: '',
       scores: 0,
-      newAvatar: '',
+      isNewAvatar: '',
     };
   }
 
@@ -51,11 +51,11 @@ class User extends Component {
     }
     this.props.hasAuth ();
     console.log ('this.props.avatarUrl', this.props.avatarUrl);
-    this.setState ({
-      avatarView: this.props.avatarUrl
-        ? this.props.avatarUrl
-        : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA_oX0Xg-tJvcxkxwvc3C4AYnlJDJfvpWTQ5jFnUR7yAjDqtQS',
-    });
+    // this.setState ({
+    //   avatarView: this.props.avatarUrl
+    //     ? this.props.avatarUrl
+    //     : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA_oX0Xg-tJvcxkxwvc3C4AYnlJDJfvpWTQ5jFnUR7yAjDqtQS',
+    // });
     const userInfo = getDecodedToken ();
     this.setState ({name: userInfo.name});
     console.log (userInfo);
@@ -102,7 +102,9 @@ class User extends Component {
             if (!res) {
               return message.error ('Update avatar failed! Please try again.');
             }
-            this.setState ({newAvatar: res});
+            console.log ('res in user', res);
+            this.setState ({isNewAvatar: res});
+            console.log ('state.nisNewAvatar', this.state.isNewAvatar);
             // this.changeAvatar (res);
             return message.success ('Your avatar updated successfully!');
           })
@@ -113,28 +115,40 @@ class User extends Component {
     });
   };
 
-  checkDefaultAvatar = () => {
-    if (!this.props.avatarUrl) {
+  // checkDefaultAvatar = () => {
+  //   if (!this.props.avatarUrl) {
+  //     return (
+  //       <div className="spinCover">
+  //         <Spin size="small" />;
+  //       </div>
+  //     );
+  //   }
+  //   return <img alt="avatar-view" src={this.state.avatarView} />;
+  // };
+
+  setAvatar = (symbol, backGround, border) => {
+    // if (!symbol || !backGround || !border) {
+    //   return <img alt="avatar-view" src={this.state.avatarView} />;
+    // }
+    return (
+      <div className="avatarContainer">
+        <img className="symbol image" src={symbol} />
+        <img className="bGround image" src={backGround} />
+        <img className="border image" src={border} />
+      </div>
+    );
+  };
+
+  handleAvatarDisplay = (symbolValue, bGroundValue, borderValue) => {
+    if (!this.state.avatarView) {
       return (
         <div className="spinCover">
-          <Spin size="small" />;
+          <Spin size="small" />
         </div>
       );
     }
-    return <img alt="avatar-view" src={this.state.avatarView} />;
-  };
-
-  setAvatar = (symbol, backGround, border) => (
-    <div className="avatarContainer">
-      <img className="symbol image" src={symbol} />
-      <img className="bGround image" src={backGround} />
-      <img className="border image" src={border} />
-    </div>
-  );
-
-  handleAvatarDisplay = (symbolValue, bGroundValue, borderValue) => {
     if (!symbolValue || !bGroundValue || !borderValue) {
-      return this.checkDefaultAvatar ();
+      return <img alt="avatar-view" src={this.state.avatarView} />;
     }
     //console.log ('value for avatar view', value);
     return (
@@ -202,6 +216,12 @@ class User extends Component {
     );
   };
 
+  // handleAvatarSwitch () {
+  //   return Boolean (this.props.isSetAvatar)
+  //     ? this.props.getNewAvatar ()
+  //     : this.props.avatarUrl;
+  // }
+
   callback (key) {
     console.log (key);
   }
@@ -221,11 +241,6 @@ class User extends Component {
       border: 0,
       overflow: 'hidden',
     };
-    // const isValidDate = date => moment (date).isAfter (moment (0));
-    // const lastest = moment ('20171501');
-    // // const formattedDate = lastest.format ('YYYYMMDD');
-    // console.log ('lastest', lastest);
-    // // console.log ('formattedDate', formattedDate);
 
     const symbolOptions = [
       {
@@ -263,10 +278,6 @@ class User extends Component {
         value: 'http://shopforclipart.com/images/wedding-ring-images-clipart/10.jpg',
       },
       {
-        label: 'green',
-        value: 'https://requestreduce.org/images/christmas-concert-clipart-16.png',
-      },
-      {
         label: 'Blue chain',
         value: 'https://marketplace.canva.com/MACz7hEgGMk/1/screen/canva-border%2C-ring%2C-frame%2C-design%2C-circle%2C-decoration%2C-round-MACz7hEgGMk.png',
       },
@@ -277,10 +288,6 @@ class User extends Component {
       {
         label: 'Orange Loop',
         value: orangeLoop,
-      },
-      {
-        label: 'Fire',
-        value: 'https://c7.uihere.com/files/323/30/535/light-fire-flame-burst-of-fire-round-border.jpg',
       },
     ];
 
@@ -299,9 +306,9 @@ class User extends Component {
             ]}
           >
             <Meta
-              avatar={<Avatar src={this.props.avatarUrl} />}
+              // avatar={<img src={this.handleAvatarSwitch} className="metaAvatar" />}
               title={this.state.name}
-              description="scores here"
+              description="scores: 15"
               scores={this.state.scores}
             />
           </Card>
@@ -424,8 +431,31 @@ class User extends Component {
                   header="Update your detail"
                   key="1"
                   style={customPanelStyle}
-                />
-                <Panel header="Site setting" key="2" style={customPanelStyle} />
+                >
+                  <Form
+                    hideRequiredMark={false}
+                    layout="horizontal"
+                    className="ant-advanced-search-form"
+                    onSubmit={this.handleSubmit}
+                  >
+                    <FormItem label="First name">
+                      <Input />
+                    </FormItem>
+                    <FormItem label="Last name">
+                      <Input />
+                    </FormItem>
+                    <FormItem label="Other name you want to display">
+                      <Input />
+                    </FormItem>
+                    <FormItem label="Mobile">
+                      <Input />
+                    </FormItem>
+
+                  </Form>
+                </Panel>
+                <Panel header="Site setting" key="2" style={customPanelStyle}>
+                  <p>Coming soon...</p>
+                </Panel>
               </Collapse>
               <Button className="avatarBtn" type="primary" htmlType="submit">
                 Submit
